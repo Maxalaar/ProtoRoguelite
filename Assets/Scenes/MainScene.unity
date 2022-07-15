@@ -241,6 +241,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 398554869}
+  _damage:
+    _min: 5
+    _max: 100
+    _base: 0
+  _rangeMin:
+    _min: 0
+    _max: 100
+    _base: 1
+  _rangeMax:
+    _min: 0
+    _max: 100
+    _base: 5
+  _areaOfEffect:
+    _min: 0
+    _max: 100
+    _base: 2
+  TOREMOVE: {fileID: 11400000, guid: 737bb12a88238bb4cbe9a730dce42470, type: 2}
 --- !u!212 &450180115
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -549,7 +566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &563425382
 Rigidbody2D:
   serializedVersion: 4
@@ -632,6 +649,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 398554869}
+  _damage:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMin:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMax:
+    _min: 0
+    _max: 0
+    _base: 0
+  _areaOfEffect:
+    _min: 0
+    _max: 0
+    _base: 0
+  TOREMOVE: {fileID: 0}
 --- !u!212 &563425386
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -719,7 +753,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &772650557
 Rigidbody2D:
   serializedVersion: 4
@@ -802,6 +836,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 398554869}
+  _damage:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMin:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMax:
+    _min: 0
+    _max: 0
+    _base: 0
+  _areaOfEffect:
+    _min: 0
+    _max: 0
+    _base: 0
+  TOREMOVE: {fileID: 0}
 --- !u!212 &772650561
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -889,7 +940,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &1427629909
 Rigidbody2D:
   serializedVersion: 4
@@ -972,6 +1023,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 398554869}
+  _damage:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMin:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMax:
+    _min: 0
+    _max: 0
+    _base: 0
+  _areaOfEffect:
+    _min: 0
+    _max: 0
+    _base: 0
+  TOREMOVE: {fileID: 0}
 --- !u!212 &1427629913
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1059,7 +1127,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &1755584800
 Rigidbody2D:
   serializedVersion: 4
@@ -1142,6 +1210,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _target: {fileID: 398554869}
+  _damage:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMin:
+    _min: 0
+    _max: 0
+    _base: 0
+  _rangeMax:
+    _min: 0
+    _max: 0
+    _base: 0
+  _areaOfEffect:
+    _min: 0
+    _max: 0
+    _base: 0
+  TOREMOVE: {fileID: 0}
 --- !u!212 &1755584804
 SpriteRenderer:
   m_ObjectHideFlags: 0

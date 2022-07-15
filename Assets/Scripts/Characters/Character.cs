@@ -18,6 +18,11 @@ public class Character : MonoBehaviour
 
     #region Serialized Fields
     [SerializeField] private GameObject _target;
+
+    [SerializeField] private Statistic _damage;
+    [SerializeField] private Statistic _rangeMin;
+    [SerializeField] private Statistic _rangeMax;
+    [SerializeField] private Statistic _areaOfEffect;    
     #endregion Serialized Fields
 
     #region Private Fields
@@ -25,7 +30,14 @@ public class Character : MonoBehaviour
     #endregion Private Fields
 
     #region Properties
+    public Statistic Damage => _damage;
+    public Statistic RangeMin => _rangeMin;
+    public Statistic RangeMax => _rangeMax;
+    public Statistic AreaOfEffect => _areaOfEffect;
     #endregion Properties
+
+    //TEST
+    public StatisticModifierSO TOREMOVE;
 
     #endregion Fields
 
@@ -38,6 +50,8 @@ public class Character : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
+
+        StatisticModifier statMod = new StatisticModifier(TOREMOVE, this);
     }
 
     private void Update()

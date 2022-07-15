@@ -1,18 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class Statistic
 {
     #region Fields
 
     #region Serialized Fields
+    [SerializeField] private float _min;
+    [SerializeField] private float _max;
+    [SerializeField] private float _base;
     #endregion Serialized Fields
 
     #region Private Fields
-    private float _min;
-    private float _max;
-    private float _base;
     private float _current;
     #endregion Private Fields
 
@@ -28,11 +30,13 @@ public class Statistic
     #region Methods
 
     #region Constructor
-    private Statistic(float baseValue, float minValue = float.MinValue, float maxValue = float.MaxValue)
+    public Statistic(float baseValue, float minValue = float.MinValue, float maxValue = float.MaxValue)
     {
         _base = baseValue;
         _min = minValue;
         _max = maxValue;
+
+        _current = _base;
     }
     #endregion Constructor
 
@@ -43,7 +47,11 @@ public class Statistic
     #endregion Private Methods
 
     #region Public Methods
-
+    //TEST
+    public void AddModifier(float value)
+    {
+        _current += _base * value;
+    }
     #endregion Public Methods
 
     #endregion Methods
