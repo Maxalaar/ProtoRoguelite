@@ -82,7 +82,7 @@ public class StatisticModifier
     #endregion Private Methods
 
     #region Public Methods
-    public void addStatistic(Statistic statistic)
+    public void AddStatistic(Statistic statistic)
     {
         if (statistic.Type == _targetStatistics)
         {
@@ -105,7 +105,7 @@ public class StatisticModifier
             return;
         }
     }
-    public void supStatistic(Statistic statistic)
+    public void RemStatistic(Statistic statistic)
     {
         if (statistic.Type == _targetStatistics)
         {

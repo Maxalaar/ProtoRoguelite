@@ -36,6 +36,7 @@ public class Statistic
     {
         _type = typeValue;
         _base = baseValue;
+        _current = _base;
         _min = minValue;
         _max = maxValue;
     }
