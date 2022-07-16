@@ -20,6 +20,7 @@ public class StatisticModifierSO : ScriptableObject
     #endregion Serialized Fields
 
     #region Private Fields
+    [SerializeField, HideInInspector] private int _statisticIndex;
     #endregion Private Fields
 
     #region Properties
@@ -29,7 +30,7 @@ public class StatisticModifierSO : ScriptableObject
     public float Value => _value;
     public float Duration => _duration;
 
-    public int StatisticIndex { get; set; } = 0;
+    public int StatisticIndex { get => _statisticIndex; set => _statisticIndex = value; }
     #endregion Properties
 
     #endregion Fields

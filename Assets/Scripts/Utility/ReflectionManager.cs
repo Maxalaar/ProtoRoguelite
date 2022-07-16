@@ -16,34 +16,19 @@ public class ReflectionManager : MonoBehaviour
             return pptInfos;
 
         List<PropertyInfo> pptInfosList = new List<PropertyInfo>();
-        pptInfosList.AddRange(pptInfos);
-
-        List<PropertyInfo> pptToRemoveList = new List<PropertyInfo>();
 
         //go through all properties of the type
-        foreach (PropertyInfo pptInfo in pptInfosList)
+        foreach (PropertyInfo pptInfo in pptInfos)
         {
-            bool hasIncorrectType = true;
-
-            //if the property's type matches a specific type, it won't be removed
+            //if the property's type matches a specific type, add it to the list
             foreach (Type type in specificTypes)
             {
                 if (pptInfo.PropertyType == type)
-                    hasIncorrectType = false;
+                {
+                    pptInfosList.Add(pptInfo);
+                    break;
+                }
             }
-
-            //add the incorrect type to the remove list
-            if (hasIncorrectType)
-            {
-                pptToRemoveList.Add(pptInfo);
-            }
-        }
-
-        //remove properties to remove from the list that will be returned
-        foreach (PropertyInfo pptToRemove in pptToRemoveList)
-        {
-            if (pptInfosList.Contains(pptToRemove))
-                pptInfosList.Remove(pptToRemove);
         }
 
         return pptInfosList.ToArray();
