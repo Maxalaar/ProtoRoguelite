@@ -1,20 +1,66 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Reflection;
+using UnityEngine.UI;
+
+[CreateAssetMenu(menuName = "ScriptableObjects/StatisticModifierSO")]
+public class StatisticModifierSO : ScriptableObject
+{
+    #region Fields
+
+    #region Serialized Fields
+    #endregion Serialized Fields
+
+    #region Private Fields
+    private string _name;
+    private string _description;
+    private Image _image;
+
+    private Statistic[] _statistics;
+    private float _value;
+    private float _duration;
+    #endregion Private Fields
+
+    #region Properties
+    public string Name => _name;
+    public string Description => _description;
+    public Image Image => _image;
+    public Statistic[] Statistics => _statistics;
+    public float Value => _value;
+    public float Duration => _duration;
+    #endregion Properties
+
+    #endregion Fields
+
+    #region Methods
+
+    #region Unity Interface
+    #endregion Unity Interface
+
+    #region Private Methods
+    #endregion Private Methods
+
+    #region Public Methods
+    #endregion Public Methods
+
+    #endregion Methods
+}
 
 public class StatisticModifier
 {
     #region Fields
 
     #region Serialized Fields
-    private StatisticModifierSO _statModSO = null;
     #endregion Serialized Fields
 
     #region Private Fields
-    private List<Statistic> _statistics;
+    private StatisticsEnum _targetStatistics;
+    List<Statistic> _statistis = new List<Statistic>();
+    private float _value;
     #endregion Private Fields
 
     #region Properties
+    public float Value => _value;
     #endregion Properties
 
     #endregion Fields
@@ -22,14 +68,10 @@ public class StatisticModifier
     #region Methods
 
     #region Constructor
-    //TEST
-    public StatisticModifier(StatisticModifierSO statModSO, Character character)
+    public StatisticModifier(StatisticsEnum targetStatistics, float value)
     {
-        _statModSO = statModSO;
-
-        _statistics = new List<Statistic>();
-
-        AddStatistic(character);
+        _targetStatistics = targetStatistics;
+        _value = value;
     }
     #endregion Constructor
 
@@ -40,38 +82,50 @@ public class StatisticModifier
     #endregion Private Methods
 
     #region Public Methods
-    public void AddStatistic(Character character)
+    public void AddStatistic(Statistic statistic)
     {
-        if (_statModSO == null)
+        if (statistic.Type == _targetStatistics)
         {
-            Debug.LogWarning("StatisticModifier._statModSO is null !");
-            return;
-        }
-
-        PropertyInfo[] pptInfos = ReflectionManager.GetProperties<Character>(new List<System.Type> { typeof(Statistic) });
-
-        if (pptInfos == null)
-            return;
-
-        for (int i = 0; i < pptInfos.Length; i++)
-        {
-            if (i == _statModSO.StatisticIndex)
+            if (_statistis.Contains(statistic) == true)
             {
-                _statistics.Add(pptInfos[i].GetValue(character) as Statistic);
+                Debug.LogWarning("Attempt to add to the StatisticModifier a Statistic that is already modified by it");
+                return;
             }
+            if (statistic.ContainsStatisticModifier(this) == true)
+            {
+                Debug.LogWarning("Attempt to add to the Statistic a StatisticModifier that is already modified by it");
+                return;
+            }
+            _statistis.Add(statistic);
+            statistic.AddStatisticModifier(this);
         }
-
-        //TEST
-        foreach (Statistic statistic in _statistics)
+        else
         {
-            if (statistic == null)
-                continue;
-
-            Debug.Log(statistic.Current);
-
-            statistic.AddModifier(_statModSO.Value);
-
-            Debug.Log(statistic.Current);
+            Debug.LogWarning("Miss match between StatisticModifier._targetStatistics and Statistic._type");
+            return;
+        }
+    }
+    public void RemStatistic(Statistic statistic)
+    {
+        if (statistic.Type == _targetStatistics)
+        {
+            if (_statistis.Contains(statistic) == false)
+            {
+                Debug.LogWarning("Attempt to sup Statistic to the StatisticModifier but is not modified by it");
+                return;
+            }
+            if (statistic.ContainsStatisticModifier(this) == false)
+            {
+                Debug.LogWarning("Attempt to sup StatisticModifier to the Statistic but is not modified by it");
+                return;
+            }
+            _statistis.Remove(statistic);
+            statistic.RemStatisticModifier(this);
+        }
+        else
+        {
+            Debug.LogWarning("Miss match between StatisticModifier._targetStatistics and Statistic._type");
+            return;
         }
     }
     #endregion Public Methods
