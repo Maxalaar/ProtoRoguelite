@@ -36,9 +36,6 @@ public class Character : MonoBehaviour
     public Statistic AreaOfEffect => _areaOfEffect;
     #endregion Properties
 
-    //TEST
-    public StatisticModifierSO TOREMOVE;
-
     #endregion Fields
 
     #region Methods
@@ -50,8 +47,6 @@ public class Character : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
-
-        StatisticModifier statMod = new StatisticModifier(TOREMOVE, this);
     }
 
     private void Update()

@@ -17,4 +17,4 @@ MonoBehaviour:
   _image: {fileID: 0}
   _value: 0.5
   _duration: 0
-  _statisticIndex: 4
+  _statisticIndex: 1
