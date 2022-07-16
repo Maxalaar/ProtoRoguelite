@@ -1,32 +1,52 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class MainManager : MonoBehaviour
+namespace ProtoRoguelite.Managers
 {
-    #region Fields
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    #region Serialized Fields
-    #endregion Serialized Fields
+    public class MainManager : MonoBehaviour
+    {
+        #region Fields
 
-    #region Private Fields
-    #endregion Private Fields
+        #region Serialized Fields
+        [SerializeField] private BattlefieldManager _battlefieldManager = null;
+        [SerializeField] private CameraManager _cameraManager = null;
+        [SerializeField] private CharacterManager _characterManager = null;
+        #endregion Serialized Fields
 
-    #region Properties
-    #endregion Properties
+        #region Private Fields
+        #endregion Private Fields
 
-    #endregion Fields
+        #region Properties
+        public BattlefieldManager BattlefieldManager => _battlefieldManager;
+        public CameraManager CameraManager => _cameraManager;
+        public CharacterManager CharacterManager => _characterManager;
+        #endregion Properties
 
-    #region Methods
+        public static MainManager instance = null;
 
-    #region Unity Interface
-    #endregion Unity Interface
+        #endregion Fields
 
-    #region Private Methods
-    #endregion Private Methods
+        #region Methods
 
-    #region Public Methods
-    #endregion Public Methods
+        #region Unity Interface
+        private void Awake()
+        {
+            //if another MainManager already exists, destroy itself
+            //TODO : Singleton
+            if (MainManager.instance != null)
+                Destroy(gameObject);
 
-    #endregion Methods
+            MainManager.instance = this;
+        }
+        #endregion Unity Interface
+
+        #region Private Methods
+        #endregion Private Methods
+
+        #region Public Methods
+        #endregion Public Methods
+
+        #endregion Methods
+    }
 }

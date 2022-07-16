@@ -1,3 +1,4 @@
+using ProtoRoguelite.Managers;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,15 +18,18 @@ public class Character : MonoBehaviour
     #region Fields
 
     #region Serialized Fields
-    [SerializeField] private GameObject _target;
+    [SerializeField] private Character _target;
 
     [SerializeField] private Statistic _damage;
     [SerializeField] private Statistic _rangeMin;
     [SerializeField] private Statistic _rangeMax;
-    [SerializeField] private Statistic _areaOfEffect;    
+    [SerializeField] private Statistic _areaOfEffect;
     #endregion Serialized Fields
 
     #region Private Fields
+    private MainManager _mainManager = null;
+    private CharacterManager _characterManager = null;
+
     private NavMeshAgent _navMeshAgent;
     #endregion Private Fields
 
@@ -34,6 +38,8 @@ public class Character : MonoBehaviour
     public Statistic RangeMin => _rangeMin;
     public Statistic RangeMax => _rangeMax;
     public Statistic AreaOfEffect => _areaOfEffect;
+
+    public Team Team { get; set; } = null;
     #endregion Properties
 
     #endregion Fields
@@ -43,18 +49,13 @@ public class Character : MonoBehaviour
     #region Unity Interface
     private void Start()
     {
+        _mainManager = MainManager.instance;
+        _characterManager = _mainManager?.CharacterManager;
+
         //navMeshAgent initialization
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _navMeshAgent.updateRotation = false;
         _navMeshAgent.updateUpAxis = false;
-    }
-
-    private void Update()
-    {
-        if (_navMeshAgent == null || _target == null)
-            return;
-
-        _navMeshAgent.SetDestination(_target.transform.position);
     }
     #endregion Unity Interface
 
@@ -62,6 +63,23 @@ public class Character : MonoBehaviour
     #endregion Private Methods
 
     #region Public Methods
+    public void UpdateCharacter()
+    {
+        if (_navMeshAgent == null)
+            return;
+
+        if (_target == null)
+        {
+            //try finding a target
+            _target = _characterManager.FindTarget(this);
+
+            if (_target == null)
+                return;
+        }
+
+        //move to target
+        _navMeshAgent.SetDestination(_target.transform.position);
+    }
     #endregion Public Methods
 
     #endregion Methods

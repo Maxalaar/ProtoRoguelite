@@ -1,32 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class BattlefieldManager : MonoBehaviour
+namespace ProtoRoguelite.Managers
 {
-    #region Fields
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    #region Serialized Fields
-    #endregion Serialized Fields
+    public class BattlefieldManager : MonoBehaviour
+    {
+        #region Fields
 
-    #region Private Fields
-    #endregion Private Fields
+        #region Serialized Fields
+        #endregion Serialized Fields
 
-    #region Properties
-    #endregion Properties
+        #region Private Fields
+        #endregion Private Fields
 
-    #endregion Fields
+        #region Properties
+        #endregion Properties
 
-    #region Methods
+        #endregion Fields
 
-    #region Unity Interface
-    #endregion Unity Interface
+        #region Methods
 
-    #region Private Methods
-    #endregion Private Methods
+        #region Unity Interface
+        #endregion Unity Interface
 
-    #region Public Methods
-    #endregion Public Methods
+        #region Private Methods
+        #endregion Private Methods
 
-    #endregion Methods
+        #region Public Methods
+        #endregion Public Methods
+
+        #endregion Methods
+    }
 }

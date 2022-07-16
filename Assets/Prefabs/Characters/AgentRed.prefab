@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8344349570364077728}
   - component: {fileID: 8344349570364077731}
   m_Layer: 0
-  m_Name: Agent
+  m_Name: AgentRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
