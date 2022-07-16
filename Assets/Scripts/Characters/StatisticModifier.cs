@@ -91,14 +91,13 @@ public class StatisticModifier
                 Debug.LogWarning("Attempt to add to the StatisticModifier a Statistic that is already modified by it");
                 return;
             }
-            if (statistic.StatisticModifiers.Contains(this) == true)
+            if (statistic.ContainsStatisticModifier(this) == true)
             {
                 Debug.LogWarning("Attempt to add to the Statistic a StatisticModifier that is already modified by it");
                 return;
             }
             _statistis.Add(statistic);
-            statistic.StatisticModifiers.Add(this);
-            statistic.computeCurrentValue();
+            statistic.AddStatisticModifier(this);
         }
         else
         {
@@ -115,14 +114,13 @@ public class StatisticModifier
                 Debug.LogWarning("Attempt to sup Statistic to the StatisticModifier but is not modified by it");
                 return;
             }
-            if (statistic.StatisticModifiers.Contains(this) == false)
+            if (statistic.ContainsStatisticModifier(this) == false)
             {
                 Debug.LogWarning("Attempt to sup StatisticModifier to the Statistic but is not modified by it");
                 return;
             }
             _statistis.Remove(statistic);
-            statistic.StatisticModifiers.Remove(this);
-            statistic.computeCurrentValue();
+            statistic.RemStatisticModifier(this);
         }
         else
         {

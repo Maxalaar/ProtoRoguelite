@@ -24,7 +24,6 @@ public class Statistic
     public float Max => _max;
     public float Base => _base;
     public float Current => _current;
-    public List<StatisticModifier> StatisticModifiers => _statisticModifiers;   //Add computeCurrentValue() here and remouve in StatisticModifier and modification for < O(n)
 
     #endregion Properties
 
@@ -39,7 +38,6 @@ public class Statistic
         _base = baseValue;
         _min = minValue;
         _max = maxValue;
-        computeCurrentValue();
     }
     #endregion Constructor
 
@@ -50,15 +48,24 @@ public class Statistic
     #endregion Private Methods
 
     #region Public Methods
-    public void computeCurrentValue()
+
+    public void AddStatisticModifier(StatisticModifier statisticModifier)
     {
-        float currentValueTemp = _base;
-        foreach (StatisticModifier StatisticModifier in _statisticModifiers)
-        {
-            currentValueTemp += StatisticModifier.Value * _base;
-        }
+        _statisticModifiers.Add(statisticModifier);
         
-        _current =  currentValueTemp;
+        _current +=  statisticModifier.Value * _base;
+    }
+
+    public void RemStatisticModifier(StatisticModifier statisticModifier)
+    {
+        _statisticModifiers.Remove(statisticModifier);
+        
+        _current -=  statisticModifier.Value * _base;
+    }
+
+    public bool ContainsStatisticModifier(StatisticModifier statisticModifier)
+    {
+        return _statisticModifiers.Contains(statisticModifier);
     }
     #endregion Public Methods
 
