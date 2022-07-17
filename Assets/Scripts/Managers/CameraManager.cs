@@ -1,54 +1,57 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public class CameraManager : MonoBehaviour
+namespace ProtoRoguelite.Managers
 {
-    #region Fields
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
 
-    #region Serialized Fields
-    [SerializeField] private float _zoomSpeed = 1f;
-    [SerializeField] private float _smoothSpeed = 2.0f;
-    [SerializeField] private float _minOrtho = 1.0f;
-    [SerializeField] private float _maxOrtho = 20.0f;
-    #endregion Serialized Fields
-
-    #region Private Fields
-    private float _targetOrtho;
-    #endregion Private Fields
-
-    #region Properties
-    #endregion Properties
-
-    #endregion Fields
-
-    #region Methods
-
-    #region Unity Interface    
-    void Start()
+    public class CameraManager : MonoBehaviour
     {
-        _targetOrtho = Camera.main.orthographicSize;
-    }
+        #region Fields
 
-    void Update()
-    {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        #region Serialized Fields
+        [SerializeField] private float _zoomSpeed = 1f;
+        [SerializeField] private float _smoothSpeed = 2.0f;
+        [SerializeField] private float _minOrtho = 1.0f;
+        [SerializeField] private float _maxOrtho = 20.0f;
+        #endregion Serialized Fields
 
-        if (scroll != 0.0f)
+        #region Private Fields
+        private float _targetOrtho;
+        #endregion Private Fields
+
+        #region Properties
+        #endregion Properties
+
+        #endregion Fields
+
+        #region Methods
+
+        #region Unity Interface    
+        void Start()
         {
-            _targetOrtho -= scroll * _zoomSpeed;
-            _targetOrtho = Mathf.Clamp(_targetOrtho, _minOrtho, _maxOrtho);
+            _targetOrtho = Camera.main.orthographicSize;
         }
 
-        Camera.main.orthographicSize = Mathf.MoveTowards(Camera.main.orthographicSize, _targetOrtho, _smoothSpeed * Time.deltaTime);
+        void Update()
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+            if (scroll != 0.0f)
+            {
+                _targetOrtho -= scroll * _zoomSpeed;
+                _targetOrtho = Mathf.Clamp(_targetOrtho, _minOrtho, _maxOrtho);
+            }
+
+            Camera.main.orthographicSize = Mathf.MoveTowards(Camera.main.orthographicSize, _targetOrtho, _smoothSpeed * Time.deltaTime);
+        }
+        #endregion Unity Interface
+
+        #region Private Methods
+        #endregion Private Methods
+
+        #region Public Methods
+        #endregion Public Methods
+
+        #endregion Methods
     }
-    #endregion Unity Interface
-
-    #region Private Methods
-    #endregion Private Methods
-
-    #region Public Methods
-    #endregion Public Methods
-
-    #endregion Methods
 }
