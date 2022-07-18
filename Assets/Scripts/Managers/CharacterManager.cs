@@ -5,7 +5,7 @@ namespace ProtoRoguelite.Managers
     using System.Collections.Generic;
     using UnityEngine;
 
-    [Serializable]
+    //[Serializable]
     public class Team
     {
         #region Fields
@@ -99,14 +99,14 @@ namespace ProtoRoguelite.Managers
         #region Fields
 
         #region Serialized Fields
-        [SerializeField] public GameObject BluePrefab;
-        [SerializeField] public GameObject RedPrefab;
+        [SerializeField] private GameObject BluePrefab;
+        [SerializeField] private GameObject RedPrefab;
+
+        [SerializeField] private List<Team> _teams = new List<Team>();
         #endregion Serialized Fields
 
         #region Private Fields
         private MainManager _mainManager = null;
-
-        [SerializeField] private List<Team> _teams = new List<Team>();
 
         private List<Character> _characters = new List<Character>();
         #endregion Private Fields
