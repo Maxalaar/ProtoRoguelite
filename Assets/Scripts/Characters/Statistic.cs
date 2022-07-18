@@ -57,7 +57,7 @@ public class Statistic
         _current +=  statisticModifier.Value * _base;
     }
 
-    public void RemStatisticModifier(StatisticModifier statisticModifier)
+    public void RemoveStatisticModifier(StatisticModifier statisticModifier)
     {
         _statisticModifiers.Remove(statisticModifier);
         

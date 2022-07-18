@@ -8,11 +8,90 @@ namespace ProtoRoguelite.Managers
     [Serializable]
     public class Team
     {
-        public int teamNumber;
-        public int teamSize;
-        public GameObject characterPrefab;
-        public Transform spawnPivot;
-        [HideInInspector] public List<Character> characters;
+        #region Fields
+
+        #region Serialized Fields
+        #endregion Serialized Fields
+
+        #region Private Fields
+        [SerializeField] private string _name;
+        [SerializeField] private List<Character> _characters = new List<Character>();
+        [SerializeField] private List<Team> _adeversaryTeams = new List<Team>();
+        [SerializeField] private List<Team> _allyTeams = new List<Team>();
+        #endregion Private Fields
+
+        #region Properties
+        public List<Team> AdeversaryTeams
+        {
+            get { return _adeversaryTeams; }
+        }
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        public List<Character> Characters
+        {
+            get { return _characters; }
+        }
+        #endregion Properties
+
+        #endregion Fields
+
+        #region Methods
+
+        #region Unity Interface
+        #endregion Unity Interface
+
+        #region Private Methods
+        #endregion Private Methods
+
+        #region Public Methods
+
+        #region Constructor
+            public Team(string name)
+            {
+                _name = name;
+            }
+        #endregion Constructor
+        public void AddCharacter(Character character)
+        {
+            if (_characters.Contains(character) == true)
+            {
+                Debug.LogWarning("Attempt to add character to team but he is already in the team");
+                return;
+            }
+            _characters.Add(character);
+            character.Team = this;
+        }
+
+        public void RemoveCharacter(Character character)
+        {
+            if (_characters.Contains(character) == false)
+            {
+                Debug.LogWarning("Attempt to remove character to team but he is not in the team");
+                return;
+            }
+            _characters.Remove(character);
+            character.Team = null;
+        }
+
+        public void AddAdeversary(Team newAdeversary)
+        {
+            if (_adeversaryTeams.Contains(newAdeversary))
+            {
+                return;
+            }
+            if (_allyTeams.Contains(newAdeversary))
+            {
+                _allyTeams.Remove(newAdeversary);
+            }
+            _adeversaryTeams.Add(newAdeversary);
+            newAdeversary.AddAdeversary(this);
+        }
+        #endregion Public Methods
+
+        #endregion Methods
     }
 
     public class CharacterManager : MonoBehaviour
@@ -20,13 +99,14 @@ namespace ProtoRoguelite.Managers
         #region Fields
 
         #region Serialized Fields
-        [SerializeField] private List<Team> _teams = new List<Team>();
+        [SerializeField] public GameObject BluePrefab;
+        [SerializeField] public GameObject RedPrefab;
         #endregion Serialized Fields
 
         #region Private Fields
         private MainManager _mainManager = null;
 
-        private Dictionary<int, Team> _characterTeamsDico = new Dictionary<int, Team>();
+        [SerializeField] private List<Team> _teams = new List<Team>();
 
         private List<Character> _characters = new List<Character>();
         #endregion Private Fields
@@ -39,11 +119,52 @@ namespace ProtoRoguelite.Managers
         #region Methods
 
         #region Unity Interface
+        private void Start()
+        {
+            _mainManager = MainManager.instance;
+
+            Team blueTeam = new Team("Blue");
+            Team redTeam = new Team("Red");
+
+            blueTeam.AddAdeversary(redTeam);
+
+            _teams.Add(blueTeam);
+            _teams.Add(redTeam);
+
+            for (int i = 0; i < 10; i++)
+            {
+                float spawnEmplitude = 5f;
+                GameObject characterInstance = Instantiate(BluePrefab, transform);
+                Character newCharacter = characterInstance.GetComponent<Character>();
+                
+                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
+                newCharacter.transform.position = spawnPos;
+                
+                AddCharacter(newCharacter, blueTeam);
+            }
+
+            for (int i = 0; i < 10; i++)
+            {
+                float spawnEmplitude = 5f;
+                GameObject characterInstance = Instantiate(RedPrefab, transform);
+                Character newCharacter = characterInstance.GetComponent<Character>();
+
+                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
+                newCharacter.transform.position = spawnPos;
+
+                AddCharacter(newCharacter, redTeam);
+            } 
+
+            foreach (Character character in _characters)
+            {
+                character.setTargetRandomAdeversaryCharacter();
+            }
+        }
         private void Update()
         {
             if (_characters == null)
             {
-                Debug.LogWarning("CharacterManager._characters is null !");
+                Debug.LogWarning("CharacterManager._characters is null.");
                 return;
             }
 
@@ -55,111 +176,51 @@ namespace ProtoRoguelite.Managers
                 character.UpdateCharacter();
             }
         }
-
-        private void Start()
-        {
-            _mainManager = MainManager.instance;
-
-            foreach (Team team in _teams)
-            {
-                _characterTeamsDico.Add(team.teamNumber, team);
-            }
-
-            InitTeams();
-        }
         #endregion Unity Interface
 
         #region Private Methods
-        private void InitTeams()
+        private void AddCharacter(Character character, Team team = null)
         {
-            foreach (Team team in _characterTeamsDico.Values)
+            if (_characters.Contains(character) == true)
             {
-                InitTeam(team);
-            }
-        }
-
-        private void InitTeam(Team team)
-        {
-            if (team == null || team.characterPrefab == null)
-            {
-                Debug.LogWarning(string.Format("CharacterManager a team has wrong values !"));
+                Debug.LogWarning("Attempt to add character to the CharacterManager but he is already in the CharacterManager.");
                 return;
             }
+            _characters.Add(character);
 
-            //spawn new characters which number is defined by teamSize
-            for (int i = 0; i < team.teamSize; i++)
+            if (team != null)
             {
-                GameObject characterInstance = Instantiate(team.characterPrefab, transform);
-                Character character = characterInstance.GetComponent<Character>();
-
-                if (character == null)
+                if (_teams.Contains(team) == false)
                 {
-                    Debug.LogWarning(string.Format("CharacterManager team {0}'s charPrefab has " +
-                        "no Character component !", team.teamNumber));
+                    Debug.LogWarning("Team is not in the CaracterManager.");
                     return;
                 }
-
-                //set spawn position
-                if (team.spawnPivot != null)
-                {
-                    Vector3 spawnPos = team.spawnPivot.transform.position;
-                    spawnPos.x += UnityEngine.Random.Range(-1f, 1f);
-                    spawnPos.y += UnityEngine.Random.Range(-1f, 1f);
-
-                    character.transform.position = spawnPos;
-                }
-
-                AddCharacter(character, team);
+                team.AddCharacter(character);
             }
-            
-        }
-
-        private void AddCharacter(Character character, Team team)
-        {
-            character.Team = team;
-
-            if (!team.characters.Contains(character))
-                team.characters.Add(character);
-
-            if (!_characters.Contains(character))
-                _characters.Add(character);
         }
 
         private void RemoveCharacter(Character character)
         {
-            Team team = character.Team;
-
-            if (team == null)
+            if (_characters.Contains(character) == true)
+            {
+                Debug.LogWarning("Attempt to remove character to the CharacterManager but he is not in the CharacterManager.");
                 return;
+            }
+            _characters.Add(character);
 
-            if (team.characters.Contains(character))
-                team.characters.Remove(character);
-
-            if (_characters.Contains(character))
-                _characters.Remove(character);
+            if (character.Team != null)
+            {
+                if (_teams.Contains(character.Team) == false)
+                {
+                    Debug.LogWarning("Team is not in the CaracterManager.");
+                    return;
+                }
+                character.Team.RemoveCharacter(character);
+            }
         }
         #endregion Private Methods
 
         #region Public Methods
-        public Character FindTarget(Character character)
-        {
-            Character newTarget = null;
-
-            //TODO : better find target
-            //go through all teams
-            foreach (Team team in _characterTeamsDico.Values)
-            {
-                //if the team is the same as the character's, or has no characters, return
-                if (team == character.Team || team.characters.Count == 0)
-                    continue;
-
-                //pick a random character of the team as a new target
-                int randomIndex = UnityEngine.Random.Range(0, team.characters.Count);
-                newTarget = team.characters[randomIndex];
-            }
-
-            return newTarget;
-        }
         #endregion Public Methods
 
         #endregion Methods

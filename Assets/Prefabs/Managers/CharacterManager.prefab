@@ -108,14 +108,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56f11a96021ae9645800ad9fdc6261b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _teams:
-  - teamNumber: 1
-    teamSize: 3
-    characterPrefab: {fileID: 8344349570364077734, guid: c2a620287ede72043a93cbf66ae5b469, type: 3}
-    spawnPivot: {fileID: 1888668689205855089}
-    characters: []
-  - teamNumber: 2
-    teamSize: 3
-    characterPrefab: {fileID: 8344349570364077734, guid: 174c198a44eed0f489cb2151f59d8087, type: 3}
-    spawnPivot: {fileID: 2442646863904883565}
-    characters: []
+  BluePrefab: {fileID: 8344349570364077734, guid: 174c198a44eed0f489cb2151f59d8087, type: 3}
+  RedPrefab: {fileID: 8344349570364077734, guid: c2a620287ede72043a93cbf66ae5b469, type: 3}

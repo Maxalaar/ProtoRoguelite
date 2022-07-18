@@ -62,22 +62,22 @@ public class StatisticModifier
             return;
         }
     }
-    public void RemStatistic(Statistic statistic)
+    public void RemoveStatistic(Statistic statistic)
     {
         if (statistic.Type == _targetStatistics)
         {
             if (_statistis.Contains(statistic) == false)
             {
-                Debug.LogWarning("Attempt to sup Statistic to the StatisticModifier but is not modified by it");
+                Debug.LogWarning("Attempt to remove Statistic to the StatisticModifier but is not modified by it");
                 return;
             }
             if (statistic.ContainsStatisticModifier(this) == false)
             {
-                Debug.LogWarning("Attempt to sup StatisticModifier to the Statistic but is not modified by it");
+                Debug.LogWarning("Attempt to remove StatisticModifier to the Statistic but is not modified by it");
                 return;
             }
             _statistis.Remove(statistic);
-            statistic.RemStatisticModifier(this);
+            statistic.RemoveStatisticModifier(this);
         }
         else
         {

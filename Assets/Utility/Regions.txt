@@ -13,6 +13,9 @@
 
     #region Methods
 
+    #region Constructor
+    #endregion Constructor
+
     #region Unity Interface
     #endregion Unity Interface
 
