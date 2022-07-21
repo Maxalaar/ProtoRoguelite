@@ -181,6 +181,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterManager
       objectReference: {fileID: 0}
+    - target: {fileID: 6356443322727316110, guid: c73125623ce4d164e93786a9be9a6eae, type: 3}
+      propertyPath: nbRed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6356443322727316110, guid: c73125623ce4d164e93786a9be9a6eae, type: 3}
+      propertyPath: nbBlue
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 6356443322727316110, guid: c73125623ce4d164e93786a9be9a6eae, type: 3}
+      propertyPath: _redPrefab
+      value: 
+      objectReference: {fileID: 8344349570364077734, guid: c2a620287ede72043a93cbf66ae5b469, type: 3}
+    - target: {fileID: 6356443322727316110, guid: c73125623ce4d164e93786a9be9a6eae, type: 3}
+      propertyPath: _bluePrefab
+      value: 
+      objectReference: {fileID: 8344349570364077734, guid: 174c198a44eed0f489cb2151f59d8087, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c73125623ce4d164e93786a9be9a6eae, type: 3}
 --- !u!114 &2118926918374079703 stripped
