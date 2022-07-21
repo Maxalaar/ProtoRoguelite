@@ -1,10 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Pool;
 namespace ProtoRoguelite.Managers
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.Pool;
+
     public class CharacterManager : MonoBehaviour
     {
         #region Fields
@@ -89,8 +90,14 @@ namespace ProtoRoguelite.Managers
                 float spawnEmplitude = 5f;
                 GameObject characterInstance = _charactersPoolBlue.Get();
                 Character newCharacter = characterInstance.GetComponent<Character>();
-                
-                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
+
+                if (newCharacter == null)
+                {
+                    Debug.Log("CharacterManager has character prefab without Character component.");
+                    break;
+                }
+
+                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);                              
                 newCharacter.transform.position = spawnPos;
                 
                 AddCharacter(newCharacter, blueTeam);
@@ -101,7 +108,13 @@ namespace ProtoRoguelite.Managers
                 float spawnEmplitude = 5f;
                 GameObject characterInstance = _charactersPoolRed.Get();
                 Character newCharacter = characterInstance.GetComponent<Character>();
-                
+
+                if (newCharacter == null)
+                {
+                    Debug.Log("CharacterManager has character prefab without Character component.");
+                    break;
+                }
+
                 Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
                 newCharacter.transform.position = spawnPos;
                 
