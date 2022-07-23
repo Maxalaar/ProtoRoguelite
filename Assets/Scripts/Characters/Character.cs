@@ -1,3 +1,4 @@
+using ProtoRoguelite.Characters.Weapons;
 using ProtoRoguelite.Managers;
 using System;
 using System.Collections;
@@ -11,6 +12,7 @@ public enum StatisticsEnum
     RangeMin,
     RangeMax,
     AreaOfEffect,
+    Health,
 }
 
 public class Character : MonoBehaviour
@@ -23,6 +25,7 @@ public class Character : MonoBehaviour
     [SerializeField] private Statistic _rangeMin;
     [SerializeField] private Statistic _rangeMax;
     [SerializeField] private Statistic _areaOfEffect;
+    [SerializeField] private int _health = 10;
     [SerializeField] private Team _team;
     #endregion Serialized Fields
 
@@ -31,6 +34,8 @@ public class Character : MonoBehaviour
     private CharacterManager _characterManager = null;
 
     private NavMeshAgent _navMeshAgent;
+
+    private Weapon _weapon = null;
     #endregion Private Fields
 
     #region Properties
@@ -43,6 +48,8 @@ public class Character : MonoBehaviour
         get { return _team; }
         set { _team = value; }
     }
+
+    public GameObject Target => _target;
     #endregion Properties
 
     #endregion Fields
@@ -54,6 +61,7 @@ public class Character : MonoBehaviour
     {
         _mainManager = MainManager.instance;
         _characterManager = _mainManager?.CharacterManager;
+        _weapon = GetComponentInChildren<Weapon>();
     }
 
     private void Awake()
@@ -66,18 +74,32 @@ public class Character : MonoBehaviour
     #endregion Unity Interface
 
     #region Private Methods
+    private void Die()
+    {
+        _characterManager.RemoveCharacter(this);
+    }
     #endregion Private Methods
 
     #region Public Methods
     public void UpdateCharacter()
     {
-        if (_target != null)
-        {
-            _navMeshAgent.SetDestination(_target.transform.position);
-        }
+        if (_target == null || _target.gameObject.activeInHierarchy == false)
+            SetTargetRandomAdeversaryCharacter();
+
+        if (_target == null)
+            return;
+
+        Vector3 targetPos = _target.transform.position;
+
+        _navMeshAgent.SetDestination(targetPos);
+
+        if (_weapon == null)
+            return;
+
+        _weapon.RotateTowardTarget(_target.transform);
     }
 
-    public void setTargetRandomAdeversaryCharacter()
+    public void SetTargetRandomAdeversaryCharacter()
     {
         if (_navMeshAgent == null)
         {
@@ -112,6 +134,16 @@ public class Character : MonoBehaviour
 
         randomIndex = UnityEngine.Random.Range(0, adeversaryCharacters.Count);
         _target = adeversaryCharacters[randomIndex].gameObject;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        _health -= damage;
+
+        if (_health <= 0)
+        {
+            Die();
+        }
     }
     #endregion Public Methods
 

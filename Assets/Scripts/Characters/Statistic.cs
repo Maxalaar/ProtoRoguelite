@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class Statistic
 {
     #region Fields
@@ -10,11 +12,11 @@ public class Statistic
     #endregion Serialized Fields
 
     #region Private Fields
-    private StatisticsEnum _type;
-    private float _min;
-    private float _max;
-    private float _base;
-    private float _current;
+    [SerializeField] private StatisticsEnum _type;
+    [SerializeField] private float _min;
+    [SerializeField] private float _max;
+    [SerializeField] private float _base;
+    [SerializeField] private float _current;
     List<StatisticModifier> _statisticModifiers = new List<StatisticModifier>();
     #endregion Private Fields
 

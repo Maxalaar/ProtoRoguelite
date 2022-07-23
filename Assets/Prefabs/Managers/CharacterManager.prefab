@@ -108,5 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56f11a96021ae9645800ad9fdc6261b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BluePrefab: {fileID: 8344349570364077734, guid: 174c198a44eed0f489cb2151f59d8087, type: 3}
-  RedPrefab: {fileID: 8344349570364077734, guid: c2a620287ede72043a93cbf66ae5b469, type: 3}
+  _bluePrefab: {fileID: 754977727689607568, guid: 0d272e33df58b3a4da2c01bc09eb24a3, type: 3}
+  _redPrefab: {fileID: 4241563370173582490, guid: 4467b69c9331c394290a14d7e2d63a5d, type: 3}
+  nbBlue: 100
+  nbRed: 100

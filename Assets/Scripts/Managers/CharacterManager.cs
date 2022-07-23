@@ -56,7 +56,7 @@ namespace ProtoRoguelite.Managers
                     character.gameObject.SetActive(true);
                 },
                 character => {
-                    character.gameObject.SetActive(true);
+                    character.gameObject.SetActive(false);
                 },
                 character => {
                     Destroy(character.gameObject);
@@ -75,7 +75,7 @@ namespace ProtoRoguelite.Managers
                     character.gameObject.SetActive(true);
                 },
                 character => {
-                    character.gameObject.SetActive(true);
+                    character.gameObject.SetActive(false);
                 },
                 character => {
                     Destroy(character.gameObject);
@@ -121,33 +121,9 @@ namespace ProtoRoguelite.Managers
                 AddCharacter(newCharacter, redTeam);
             }
 
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     float spawnEmplitude = 5f;
-            //     GameObject characterInstance = Instantiate(_bluePrefab, transform);
-            //     Character newCharacter = characterInstance.GetComponent<Character>();
-                
-            //     Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
-            //     newCharacter.transform.position = spawnPos;
-                
-            //     AddCharacter(newCharacter, blueTeam);
-            // }
-
-            // for (int i = 0; i < 10; i++)
-            // {
-            //     float spawnEmplitude = 5f;
-            //     GameObject characterInstance = Instantiate(_redPrefab, transform);
-            //     Character newCharacter = characterInstance.GetComponent<Character>();
-
-            //     Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
-            //     newCharacter.transform.position = spawnPos;
-
-            //     AddCharacter(newCharacter, redTeam);
-            // } 
-
             foreach (Character character in _characters)
             {
-                character.setTargetRandomAdeversaryCharacter();
+                character.SetTargetRandomAdeversaryCharacter();
             }
         }
         private void Update()
@@ -188,15 +164,20 @@ namespace ProtoRoguelite.Managers
                 team.AddCharacter(character);
             }
         }
+        #endregion Private Methods
 
-        private void RemoveCharacter(Character character)
+        #region Public Methods
+        public void RemoveCharacter(Character character)
         {
-            if (_characters.Contains(character) == true)
+            if (_characters.Contains(character) == false)
             {
                 Debug.LogWarning("Attempt to remove character to the CharacterManager but he is not in the CharacterManager.");
                 return;
             }
-            _characters.Add(character);
+            _characters.Remove(character);
+
+            _charactersPoolBlue.Release(character.gameObject);
+            _charactersPoolRed.Release(character.gameObject);
 
             if (character.Team != null)
             {
@@ -208,9 +189,6 @@ namespace ProtoRoguelite.Managers
                 character.Team.RemoveCharacter(character);
             }
         }
-        #endregion Private Methods
-
-        #region Public Methods
         #endregion Public Methods
 
         #endregion Methods

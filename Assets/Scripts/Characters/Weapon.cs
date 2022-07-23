@@ -16,6 +16,8 @@ namespace ProtoRoguelite.Characters.Weapons
         private Statistic _knockBack;
         private Statistic _attackCooldown;
         private Statistic _anticipationDuration;
+
+        private Character _owner;
         #endregion Private Fields
 
         #region Properties
@@ -33,10 +35,26 @@ namespace ProtoRoguelite.Characters.Weapons
         #endregion Constructor
 
         #region Unity Interface
-        private void Update()
+        private void Start()
         {
+            _owner = GetComponentInParent<Character>();
+
             Destroy(gameObject.GetComponent<PolygonCollider2D>());
             GenerateCollider();
+
+            _damage = new Statistic(StatisticsEnum.Damage, 1);
+        }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            Character characterCollision = collision.gameObject.GetComponent<Character>();
+            if (characterCollision == null)
+                return;
+
+            if (characterCollision != _owner.Target.GetComponent<Character>())
+                return;
+
+            characterCollision.TakeDamage(Mathf.RoundToInt(_damage.Current));
         }
         #endregion Unity Interface
 
@@ -56,10 +74,22 @@ namespace ProtoRoguelite.Characters.Weapons
             }
 
             collider.points = points;
+
+            collider.isTrigger = true;
         }
         #endregion Private Methods
 
         #region Public Methods
+        public void RotateTowardTarget(Transform target)
+        {
+            Vector3 targetPos = target.position;
+            Vector3 weaponPos = transform.position;
+
+            Vector3 targetRelativePos = new Vector3(targetPos.x - weaponPos.x, targetPos.y - weaponPos.y, 0);
+
+            float newAngle = Mathf.Atan2(targetRelativePos.y, targetRelativePos.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
+        }
         #endregion Public Methods
 
         #endregion Methods
