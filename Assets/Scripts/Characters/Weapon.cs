@@ -51,7 +51,8 @@ namespace ProtoRoguelite.Characters.Weapons
             if (characterCollision == null)
                 return;
 
-            if (characterCollision != _owner.Target.GetComponent<Character>())
+            if (_owner == null || _owner.Target == null 
+                || characterCollision != _owner.Target.GetComponent<Character>())
                 return;
 
             characterCollision.TakeDamage(Mathf.RoundToInt(_damage.Current));

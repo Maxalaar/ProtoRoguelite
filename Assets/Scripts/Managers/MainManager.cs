@@ -12,6 +12,7 @@ namespace ProtoRoguelite.Managers
         [SerializeField] private BattlefieldManager _battlefieldManager = null;
         [SerializeField] private CameraManager _cameraManager = null;
         [SerializeField] private CharacterManager _characterManager = null;
+        [SerializeField] private TimeManager _timeManager = null;
         #endregion Serialized Fields
 
         #region Private Fields
@@ -21,6 +22,7 @@ namespace ProtoRoguelite.Managers
         public BattlefieldManager BattlefieldManager => _battlefieldManager;
         public CameraManager CameraManager => _cameraManager;
         public CharacterManager CharacterManager => _characterManager;
+        public TimeManager TimeManager => _timeManager;
         #endregion Properties
 
         public static MainManager instance = null;
