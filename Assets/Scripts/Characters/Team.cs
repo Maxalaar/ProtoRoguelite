@@ -1,3 +1,4 @@
+using ProtoRoguelite.Characters;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,8 @@ public class Team
     [SerializeField] private List<Character> _characters = new List<Character>();
     [SerializeField] private List<Team> _adeversaryTeams = new List<Team>();
     [SerializeField] private List<Team> _allyTeams = new List<Team>();
+
+    [SerializeField] private Color _color;
     #endregion Private Fields
 
     #region Properties
@@ -39,17 +42,19 @@ public class Team
     #region Unity Interface
     #endregion Unity Interface
 
+    #region Constructor
+    public Team(string name, Color color)
+    {
+        _name = name;
+        _color = color;
+    }
+    #endregion Constructor
+
     #region Private Methods
     #endregion Private Methods
 
     #region Public Methods
 
-    #region Constructor
-        public Team(string name)
-        {
-            _name = name;
-        }
-    #endregion Constructor
     public void AddCharacter(Character character)
     {
         if (_characters.Contains(character) == true)
@@ -59,6 +64,7 @@ public class Team
         }
         _characters.Add(character);
         character.Team = this;
+        character.GetComponent<SpriteRenderer>().color = _color;
     }
 
     public void RemoveCharacter(Character character)

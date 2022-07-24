@@ -1,5 +1,6 @@
 namespace ProtoRoguelite.Characters.Weapons
 {
+    using ProtoRoguelite.Statistics;
     using System.Collections;
     using System.Collections.Generic;
     using UnityEngine;
@@ -14,8 +15,10 @@ namespace ProtoRoguelite.Characters.Weapons
         #region Private Fields
         private Statistic _damage;
         private Statistic _knockBack;
+        private Statistic _reach;
+        private Statistic _angle;
         private Statistic _attackCooldown;
-        private Statistic _anticipationDuration;
+        private Statistic _attackAnticipation;
 
         private Character _owner;
         #endregion Private Fields
@@ -35,16 +38,6 @@ namespace ProtoRoguelite.Characters.Weapons
         #endregion Constructor
 
         #region Unity Interface
-        private void Start()
-        {
-            _owner = GetComponentInParent<Character>();
-
-            Destroy(gameObject.GetComponent<PolygonCollider2D>());
-            GenerateCollider();
-
-            _damage = new Statistic(StatisticsEnum.Damage, 1);
-        }
-
         private void OnTriggerEnter2D(Collider2D collision)
         {
             Character characterCollision = collision.gameObject.GetComponent<Character>();
@@ -81,6 +74,26 @@ namespace ProtoRoguelite.Characters.Weapons
         #endregion Private Methods
 
         #region Public Methods
+        public void Init(WeaponSO weaponSO, Character character)
+        {
+            if (weaponSO == null)
+            {
+                Debug.LogWarning("Weapon.Init has null weaponSO.");
+                return;
+            }
+
+            _owner = character;
+
+            _damage = weaponSO.Damage;
+            _knockBack = weaponSO.Knockback;
+            _reach = weaponSO.Reach;
+            _angle = weaponSO.Angle;
+            _attackCooldown = weaponSO.AttackCooldown;
+            _attackAnticipation = weaponSO.AttackAnticipation;
+
+            GenerateCollider();
+        }
+
         public void RotateTowardTarget(Transform target)
         {
             Vector3 targetPos = target.position;

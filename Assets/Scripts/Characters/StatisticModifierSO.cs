@@ -1,79 +1,83 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.UI;
-
-[CreateAssetMenu(fileName = "NewStatisticModifierSO", menuName = "ScriptableObjects/StatisticModifierSO")]
-public class StatisticModifierSO : ScriptableObject
+namespace ProtoRoguelite.Statistics
 {
-    #region Fields
+    using ProtoRoguelite.Characters;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using UnityEditor;
+    using UnityEngine;
+    using UnityEngine.UI;
 
-    #region Serialized Fields
-    [SerializeField] private string _name;
-    [SerializeField] private string _description;
-    [SerializeField] private Image _image;
-
-    [SerializeField] private float _value;
-    [SerializeField] private float _duration;
-    #endregion Serialized Fields
-
-    #region Private Fields
-    [SerializeField, HideInInspector] private int _statisticIndex;
-    #endregion Private Fields
-
-    #region Properties
-    public string Name => _name;
-    public string Description => _description;
-    public Image Image => _image;
-    public float Value => _value;
-    public float Duration => _duration;
-
-    public int StatisticIndex { get => _statisticIndex; set => _statisticIndex = value; }
-    #endregion Properties
-
-    #endregion Fields
-
-    #region Methods
-
-    #region Unity Interface
-    #endregion Unity Interface
-
-    #region Private Methods
-    #endregion Private Methods
-
-    #region Public Methods
-    #endregion Public Methods
-
-    #endregion Methods
-
-
-    [CustomEditor(typeof(StatisticModifierSO))]
-    public class StatisticModifierEditor : Editor
+    [CreateAssetMenu(fileName = "NewStatisticModifierSO", menuName = "ScriptableObjects/Statistics/StatisticModifierSO")]
+    public class StatisticModifierSO : ScriptableObject
     {
-        public override void OnInspectorGUI()
+        #region Fields
+
+        #region Serialized Fields
+        [SerializeField] private string _name;
+        [SerializeField] private string _description;
+        [SerializeField] private Image _image;
+
+        [SerializeField] private float _value;
+        [SerializeField] private float _duration;
+        #endregion Serialized Fields
+
+        #region Private Fields
+        [SerializeField, HideInInspector] private int _statisticIndex;
+        #endregion Private Fields
+
+        #region Properties
+        public string Name => _name;
+        public string Description => _description;
+        public Image Image => _image;
+        public float Value => _value;
+        public float Duration => _duration;
+
+        public int StatisticIndex { get => _statisticIndex; set => _statisticIndex = value; }
+        #endregion Properties
+
+        #endregion Fields
+
+        #region Methods
+
+        #region Unity Interface
+        #endregion Unity Interface
+
+        #region Private Methods
+        #endregion Private Methods
+
+        #region Public Methods
+        #endregion Public Methods
+
+        #endregion Methods
+
+
+        [CustomEditor(typeof(StatisticModifierSO))]
+        public class StatisticModifierEditor : Editor
         {
-            base.OnInspectorGUI();
+            public override void OnInspectorGUI()
+            {
+                base.OnInspectorGUI();
 
-            StatisticModifierSO statModSO = target as StatisticModifierSO;
+                StatisticModifierSO statModSO = target as StatisticModifierSO;
 
-            if (statModSO == null)
-                return;
+                if (statModSO == null)
+                    return;
 
-            int pptIndex = statModSO.StatisticIndex;
+                int pptIndex = statModSO.StatisticIndex;
 
-            PropertyInfo[] pptInfos = ReflectionManager.GetProperties<Character>(new List<System.Type>() { typeof(Statistic) });
-            string[] pptNames = ReflectionManager.GetPropertyNames(pptInfos);
+                PropertyInfo[] pptInfos = ReflectionManager.GetProperties<Character>(new List<System.Type>() { typeof(Statistic) });
+                string[] pptNames = ReflectionManager.GetPropertyNames(pptInfos);
 
-            if (pptNames.Length == 0)
-                return;
+                if (pptNames.Length == 0)
+                    return;
 
-            pptIndex = EditorGUILayout.Popup("Statistic modified :", pptIndex, pptNames);
+                pptIndex = EditorGUILayout.Popup("Statistic modified :", pptIndex, pptNames);
 
-            statModSO.StatisticIndex = pptIndex;
+                statModSO.StatisticIndex = pptIndex;
 
-            EditorUtility.SetDirty(target);
+                EditorUtility.SetDirty(target);
+            }
         }
     }
 }

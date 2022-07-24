@@ -4,6 +4,7 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
 using UnityEditor;
+using ProtoRoguelite.Characters;
 
 public class PathfindingTest
 {

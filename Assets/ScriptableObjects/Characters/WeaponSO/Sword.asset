@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b78f094bd690e4f48899f5c3f7d892ef, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  _damage:
+    _serialized: 1
+    _type: 0
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 1
+  _reach:
+    _serialized: 1
+    _type: 7
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 1
+  _angle:
+    _serialized: 1
+    _type: 8
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 0.7853982
+  _attackCooldown:
+    _serialized: 1
+    _type: 9
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 1
+  _attackAnticipation:
+    _serialized: 1
+    _type: 10
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 1
+  _knockback:
+    _serialized: 1
+    _type: 11
+    _min: -3.4028235e+38
+    _max: 3.4028235e+38
+    _base: 1

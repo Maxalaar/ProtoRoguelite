@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
+using ProtoRoguelite.Characters;
+using ProtoRoguelite.Statistics;
+
 public class StatisticTests
 {
     [Test]

@@ -1,5 +1,6 @@
 namespace ProtoRoguelite.Managers
 {
+    using ProtoRoguelite.Characters;
     using System;
     using System.Collections;
     using System.Collections.Generic;
@@ -11,20 +12,22 @@ namespace ProtoRoguelite.Managers
         #region Fields
 
         #region Serialized Fields
-        [SerializeField] private GameObject _bluePrefab;
-        [SerializeField] private GameObject _redPrefab;
+        [SerializeField] private GameObject _characterPrefab;
 
         [SerializeField] private List<Team> _teams = new List<Team>();
         [SerializeField] private int nbBlue;
         [SerializeField] private int nbRed;
+
+        [SerializeField] private CharacterArchetypeSO _characterArchetypeSO = null;
         #endregion Serialized Fields
 
         #region Private Fields
         private MainManager _mainManager = null;
 
         private List<Character> _characters = new List<Character>();
-        private ObjectPool<GameObject> _charactersPoolBlue;
-        private ObjectPool<GameObject> _charactersPoolRed;
+        private ObjectPool<GameObject> _charactersPool;
+
+        private float _spawnAmplitude = 5f;
         #endregion Private Fields
 
         #region Properties
@@ -39,18 +42,18 @@ namespace ProtoRoguelite.Managers
         {
             _mainManager = MainManager.instance;
 
-            Team blueTeam = new Team("Blue");
-            Team redTeam = new Team("Red");
+            Team blueTeam = new Team("Blue", Color.blue);
+            Team redTeam = new Team("Red", Color.red);
 
             blueTeam.AddAdeversary(redTeam);
 
             _teams.Add(blueTeam);
             _teams.Add(redTeam);
 
-            _charactersPoolBlue = new ObjectPool<GameObject>
+            _charactersPool = new ObjectPool<GameObject>
             (
                 () => {
-                    return Instantiate(_bluePrefab, transform);
+                    return Instantiate(_characterPrefab, transform);
                 },
                 character => {
                     character.gameObject.SetActive(true);
@@ -62,70 +65,30 @@ namespace ProtoRoguelite.Managers
                     Destroy(character.gameObject);
                 },
                 true,
-                50,
-                100
-            );
-
-            _charactersPoolRed = new ObjectPool<GameObject>
-            (
-                () => {
-                    return Instantiate(_redPrefab, transform);
-                },
-                character => {
-                    character.gameObject.SetActive(true);
-                },
-                character => {
-                    character.gameObject.SetActive(false);
-                },
-                character => {
-                    Destroy(character.gameObject);
-                },
-                true,
-                50,
-                100
+                nbBlue + nbRed,
+                nbBlue + nbRed
             );
 
             for (int i = 0; i < nbBlue; i++)
-            {
-                float spawnEmplitude = 5f;
-                GameObject characterInstance = _charactersPoolBlue.Get();
-                Character newCharacter = characterInstance.GetComponent<Character>();
-
-                if (newCharacter == null)
-                {
-                    Debug.Log("CharacterManager has character prefab without Character component.");
-                    break;
-                }
-
-                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);                              
-                newCharacter.transform.position = spawnPos;
-                
-                AddCharacter(newCharacter, blueTeam);
+            {                
+                Character character = AddCharacter(blueTeam);
+                character?.Init(_characterArchetypeSO);
             }
 
             for (int i = 0; i < nbRed; i++)
             {
-                float spawnEmplitude = 5f;
-                GameObject characterInstance = _charactersPoolRed.Get();
-                Character newCharacter = characterInstance.GetComponent<Character>();
-
-                if (newCharacter == null)
-                {
-                    Debug.Log("CharacterManager has character prefab without Character component.");
-                    break;
-                }
-
-                Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), UnityEngine.Random.Range(-spawnEmplitude, spawnEmplitude), 0);
-                newCharacter.transform.position = spawnPos;
-                
-                AddCharacter(newCharacter, redTeam);
+                Character character = AddCharacter(redTeam);
+                character?.Init(_characterArchetypeSO);
             }
 
             foreach (Character character in _characters)
             {
                 character.SetTargetRandomAdeversaryCharacter();
             }
+
+            InvokeRepeating("FillTeamCharacters", 15f, 15f);
         }
+
         private void Update()
         {
             if (_characters == null)
@@ -145,12 +108,37 @@ namespace ProtoRoguelite.Managers
         #endregion Unity Interface
 
         #region Private Methods
-        private void AddCharacter(Character character, Team team = null)
+        private void FillTeamCharacters()
         {
+            for (int i = 0; i < nbBlue - _teams[0].Characters.Count; i++)
+            {
+                AddCharacter(_teams[0]);
+            }
+
+            for (int i = 0; i < nbRed - _teams[1].Characters.Count; i++)
+            {
+                AddCharacter(_teams[1]);
+            }
+        }
+
+        private Character AddCharacter(Team team = null)
+        {
+            GameObject characterInstance = _charactersPool.Get();
+            Character character = characterInstance.GetComponent<Character>();
+
+            if (character == null)
+            {
+                Debug.Log("CharacterManager has character prefab without Character component.");
+                return null;
+            }
+
+            Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-_spawnAmplitude, _spawnAmplitude), UnityEngine.Random.Range(-_spawnAmplitude, _spawnAmplitude), 0);
+            character.transform.position = spawnPos;
+
             if (_characters.Contains(character) == true)
             {
                 Debug.LogWarning("Attempt to add character to the CharacterManager but he is already in the CharacterManager.");
-                return;
+                return null;
             }
             _characters.Add(character);
 
@@ -159,10 +147,12 @@ namespace ProtoRoguelite.Managers
                 if (_teams.Contains(team) == false)
                 {
                     Debug.LogWarning("Team is not in the CaracterManager.");
-                    return;
+                    return null;
                 }
                 team.AddCharacter(character);
             }
+
+            return character;
         }
         #endregion Private Methods
 
@@ -176,8 +166,7 @@ namespace ProtoRoguelite.Managers
             }
             _characters.Remove(character);
 
-            _charactersPoolBlue.Release(character.gameObject);
-            _charactersPoolRed.Release(character.gameObject);
+            _charactersPool.Release(character.gameObject);
 
             if (character.Team != null)
             {
