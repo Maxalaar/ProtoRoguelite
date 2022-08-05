@@ -82,6 +82,7 @@ namespace ProtoRoguelite.Characters
         private void Die()
         {
             _characterManager.RemoveCharacter(this);
+            _target = null;
         }
         #endregion Private Methods
 
@@ -102,6 +103,11 @@ namespace ProtoRoguelite.Characters
             _weapon.Init(characterArchetypeSO.WeaponSO, this);
         }
 
+        public void ResetValues()
+        {
+            _currentHealth = Mathf.RoundToInt(_maxHealth.Base);
+        }
+
         public void UpdateCharacter()
         {
             if (_target == null || _target.gameObject.activeInHierarchy == false)
@@ -109,20 +115,38 @@ namespace ProtoRoguelite.Characters
 
             if (_target == null || _target.gameObject.activeInHierarchy == false)
             {
-                _navMeshAgent.isStopped = true;
+                _target = null;
+                StopMoving();
                 return;
             }
 
-            _navMeshAgent.isStopped = false;
+            _weapon.UpdateWeapon();
+
+            if (_weapon != null && _weapon.IsAttacking)
+                return;
+
+            //move toward target
+            StartMoving();
 
             Vector3 targetPos = _target.transform.position;
 
             _navMeshAgent.SetDestination(targetPos);
 
+            //rotate weapon toward target
             if (_weapon == null)
                 return;
 
             _weapon.RotateTowardTarget(_target.transform);
+        }
+
+        public void StopMoving()
+        {
+            _navMeshAgent.isStopped = true;
+        }
+
+        public void StartMoving()
+        {
+            _navMeshAgent.isStopped = false;
         }
 
         public void SetTargetRandomAdeversaryCharacter()

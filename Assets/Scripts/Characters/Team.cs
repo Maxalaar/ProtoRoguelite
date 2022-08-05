@@ -20,6 +20,8 @@ public class Team
     #endregion Private Fields
 
     #region Properties
+    public Color Color => _color;
+
     public List<Team> AdeversaryTeams
     {
         get { return _adeversaryTeams; }

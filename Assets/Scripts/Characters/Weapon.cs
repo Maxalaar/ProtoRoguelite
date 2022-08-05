@@ -21,9 +21,16 @@ namespace ProtoRoguelite.Characters.Weapons
         private Statistic _attackAnticipation;
 
         private Character _owner;
+        private List<Character> _collidingCharacters = new List<Character>();
+
+        private Coroutine _attackCoroutine = null;
+
+        private MeshFilter _meshFilter = null;
+        private MeshRenderer _meshRenderer = null;
         #endregion Private Fields
 
         #region Properties
+        public bool IsAttacking { get; private set; } = false;
         #endregion Properties
 
         public int pointsInArcNumber = 5;
@@ -38,17 +45,48 @@ namespace ProtoRoguelite.Characters.Weapons
         #endregion Constructor
 
         #region Unity Interface
+        private void Awake()
+        {
+            _meshFilter = GetComponent<MeshFilter>();
+            _meshRenderer = GetComponent<MeshRenderer>();
+        }
+
         private void OnTriggerEnter2D(Collider2D collision)
         {
             Character characterCollision = collision.gameObject.GetComponent<Character>();
             if (characterCollision == null)
                 return;
 
-            if (_owner == null || _owner.Target == null 
-                || characterCollision != _owner.Target.GetComponent<Character>())
+            if (_owner == null || _owner.Target == null
+                || !_owner.Team.AdeversaryTeams.Contains(characterCollision.Team)
+                || _collidingCharacters.Contains(characterCollision))
                 return;
 
-            characterCollision.TakeDamage(Mathf.RoundToInt(_damage.Current));
+            _collidingCharacters.Add(characterCollision);
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            Character characterCollision = collision.gameObject.GetComponent<Character>();
+            if (characterCollision == null)
+                return;
+
+            if (_owner == null || _owner.Target == null
+                || !_owner.Team.AdeversaryTeams.Contains(characterCollision.Team)
+                || !_collidingCharacters.Contains(characterCollision))
+                return;
+
+            _collidingCharacters.Remove(characterCollision);
+        }
+
+        private void OnDisable()
+        {
+            if (_attackCoroutine == null)
+                return;
+
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
+            IsAttacking = false;
         }
         #endregion Unity Interface
 
@@ -71,6 +109,69 @@ namespace ProtoRoguelite.Characters.Weapons
 
             collider.isTrigger = true;
         }
+
+        private void GenerateMesh()
+        {
+            PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
+
+            if (collider == null || _meshFilter == null || _meshRenderer == null)
+                return;
+
+            Mesh newMesh = collider.CreateMesh(false, false);
+
+            newMesh.RecalculateBounds();
+            newMesh.RecalculateNormals();
+            newMesh.RecalculateTangents();
+
+            _meshFilter.mesh = newMesh;
+            _meshRenderer.material.color = _owner.Team.Color;
+
+            _meshFilter.transform.localRotation = transform.localRotation;
+        }
+
+        private void DestroyMesh()
+        {
+            PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
+
+            if (collider == null || _meshFilter == null)
+                return;
+
+            _meshFilter.mesh = null;
+        }
+
+        private IEnumerator CoAttack()
+        {
+            IsAttacking = true;
+
+            GenerateMesh();
+            _owner.StopMoving();
+
+            //attack anticipation
+            yield return new WaitForSeconds(_attackAnticipation.Current);
+
+            //if no enemies are in range anymore, return
+            if (_collidingCharacters.Count == 0)
+            {
+                IsAttacking = false;
+                _attackCoroutine = null;
+                DestroyMesh();
+                yield break; 
+            }
+
+            //create a temporary array in case _collidingCharacters list is modified
+            Character[] collidingCharactersTemp = _collidingCharacters.ToArray();
+            foreach (Character collidingChararcter in collidingCharactersTemp)
+            {
+                collidingChararcter.TakeDamage(Mathf.RoundToInt(_damage.Current));
+            }
+
+            //attack cooldown
+            yield return new WaitForSeconds(_attackCooldown.Current);
+
+            IsAttacking = false;
+            _attackCoroutine = null;
+            DestroyMesh();
+        }
         #endregion Private Methods
 
         #region Public Methods
@@ -92,6 +193,17 @@ namespace ProtoRoguelite.Characters.Weapons
             _attackAnticipation = weaponSO.AttackAnticipation;
 
             GenerateCollider();
+        }
+
+        public void UpdateWeapon()
+        {
+            if (_attackCoroutine != null)
+                return;
+
+            if (_collidingCharacters.Count == 0)
+                return;
+
+            _attackCoroutine = StartCoroutine(CoAttack());
         }
 
         public void RotateTowardTarget(Transform target)

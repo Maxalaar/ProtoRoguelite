@@ -57,6 +57,7 @@ namespace ProtoRoguelite.Managers
                 },
                 character => {
                     character.gameObject.SetActive(true);
+                    character.GetComponent<Character>().ResetValues();
                 },
                 character => {
                     character.gameObject.SetActive(false);
@@ -110,12 +111,14 @@ namespace ProtoRoguelite.Managers
         #region Private Methods
         private void FillTeamCharacters()
         {
-            for (int i = 0; i < nbBlue - _teams[0].Characters.Count; i++)
+            int blueCount = nbBlue - _teams[0].Characters.Count;
+            for (int i = 0; i < blueCount; i++)
             {
                 AddCharacter(_teams[0]);
             }
 
-            for (int i = 0; i < nbRed - _teams[1].Characters.Count; i++)
+            int redCount = nbRed - _teams[1].Characters.Count;
+            for (int i = 0; i < redCount; i++)
             {
                 AddCharacter(_teams[1]);
             }
