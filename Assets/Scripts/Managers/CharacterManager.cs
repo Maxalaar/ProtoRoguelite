@@ -153,11 +153,6 @@ namespace ProtoRoguelite.Managers
                     return null;
                 }
                 team.AddCharacter(character);
-
-                if (character.Weapon != null)
-                {
-                    character.Weapon.UpdateMeshColor(team.Color, 0.5f);
-                }
             }
 
             return character;

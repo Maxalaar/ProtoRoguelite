@@ -123,7 +123,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
             _meshFilter.mesh = newMesh;
 
-            UpdateMeshColor(_owner.Team.Color, 0.5f);
+            //UpdateMeshColor(_owner.Team.Color, 0.25f);
 
             _meshFilter.transform.localRotation = transform.localRotation;
         }
@@ -220,6 +220,12 @@ namespace ProtoRoguelite.Characters.Weapons
         {
             Color newColor = color;
             newColor.a = alphaValue;
+
+            float darkFactor = 0.5f;
+
+            newColor.r *= darkFactor;
+            newColor.g *= darkFactor;
+            newColor.b *= darkFactor;
 
             _meshRenderer.material.color = newColor;
         }

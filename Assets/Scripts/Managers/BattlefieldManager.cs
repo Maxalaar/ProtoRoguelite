@@ -1,14 +1,18 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.AI;
+
 namespace ProtoRoguelite.Managers
 {
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
-
     public class BattlefieldManager : MonoBehaviour
     {
         #region Fields
 
         #region Serialized Fields
+        [SerializeField] private GameObject _background;
+        [SerializeField] private GameObject _obstaclePrefab;
+        //[SerializeField] private NavMeshSurface _navMeshSurface;
         #endregion Serialized Fields
 
         #region Private Fields
@@ -28,6 +32,10 @@ namespace ProtoRoguelite.Managers
         #endregion Private Methods
 
         #region Public Methods
+        public void Init()
+        {
+            
+        }
         #endregion Public Methods
 
         #endregion Methods

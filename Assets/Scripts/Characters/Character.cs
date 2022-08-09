@@ -32,6 +32,7 @@ namespace ProtoRoguelite.Characters
         #region Serialized Fields
         [SerializeField] private NavMeshAgent _navMeshAgent;
         [SerializeField] private SpriteRenderer _spriteRenderer;
+        [SerializeField] private TextMesh _textMeshHealth;
 
         [SerializeField] private GameObject _target = null;
 
@@ -105,11 +106,14 @@ namespace ProtoRoguelite.Characters
             _size = characterArchetypeSO.Size;
 
             _weapon.Init(characterArchetypeSO.WeaponSO, this);
+
+            _textMeshHealth.text = _currentHealth.ToString();
         }
 
         public void ResetValues()
         {
             _currentHealth = Mathf.RoundToInt(_maxHealth.Base);
+            _textMeshHealth.text = _currentHealth.ToString();
         }
 
         public void UpdateCharacter()
@@ -193,6 +197,8 @@ namespace ProtoRoguelite.Characters
         public void TakeDamage(int damage)
         {
             _currentHealth -= damage;
+
+            _textMeshHealth.text = _currentHealth.ToString();
 
             if (_currentHealth <= 0)
             {
