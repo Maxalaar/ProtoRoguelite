@@ -56,11 +56,11 @@ namespace ProtoRoguelite.Managers
                     return Instantiate(_characterPrefab, transform);
                 },
                 character => {
-                    character.gameObject.SetActive(true);
-                    character.GetComponent<Character>().ResetValues();
+                    character.gameObject.SetActive(true);           
                 },
                 character => {
                     character.gameObject.SetActive(false);
+                    character.GetComponent<Character>()?.ResetValues();
                 },
                 character => {
                     Destroy(character.gameObject);
@@ -153,6 +153,11 @@ namespace ProtoRoguelite.Managers
                     return null;
                 }
                 team.AddCharacter(character);
+
+                if (character.Weapon != null)
+                {
+                    character.Weapon.UpdateMeshColor(team.Color, 0.5f);
+                }
             }
 
             return character;

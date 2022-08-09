@@ -66,7 +66,7 @@ public class Team
         }
         _characters.Add(character);
         character.Team = this;
-        character.GetComponent<SpriteRenderer>().color = _color;
+        character.SpriteRenderer.color = _color;
     }
 
     public void RemoveCharacter(Character character)

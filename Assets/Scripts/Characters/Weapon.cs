@@ -108,6 +108,8 @@ namespace ProtoRoguelite.Characters.Weapons
             collider.points = points;
 
             collider.isTrigger = true;
+
+            GenerateMesh();
         }
 
         private void GenerateMesh()
@@ -119,12 +121,9 @@ namespace ProtoRoguelite.Characters.Weapons
 
             Mesh newMesh = collider.CreateMesh(false, false);
 
-            newMesh.RecalculateBounds();
-            newMesh.RecalculateNormals();
-            newMesh.RecalculateTangents();
-
             _meshFilter.mesh = newMesh;
-            _meshRenderer.material.color = _owner.Team.Color;
+
+            UpdateMeshColor(_owner.Team.Color, 0.5f);
 
             _meshFilter.transform.localRotation = transform.localRotation;
         }
@@ -143,7 +142,7 @@ namespace ProtoRoguelite.Characters.Weapons
         {
             IsAttacking = true;
 
-            GenerateMesh();
+            
             _owner.StopMoving();
 
             //attack anticipation
@@ -154,7 +153,7 @@ namespace ProtoRoguelite.Characters.Weapons
             {
                 IsAttacking = false;
                 _attackCoroutine = null;
-                DestroyMesh();
+                //DestroyMesh();
                 yield break; 
             }
 
@@ -170,7 +169,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
             IsAttacking = false;
             _attackCoroutine = null;
-            DestroyMesh();
+            //DestroyMesh();
         }
         #endregion Private Methods
 
@@ -215,6 +214,14 @@ namespace ProtoRoguelite.Characters.Weapons
 
             float newAngle = Mathf.Atan2(targetRelativePos.y, targetRelativePos.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
+        }
+
+        public void UpdateMeshColor(Color color, float alphaValue)
+        {
+            Color newColor = color;
+            newColor.a = alphaValue;
+
+            _meshRenderer.material.color = newColor;
         }
         #endregion Public Methods
 

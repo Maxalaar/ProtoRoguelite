@@ -30,6 +30,9 @@ namespace ProtoRoguelite.Characters
         #region Fields
 
         #region Serialized Fields
+        [SerializeField] private NavMeshAgent _navMeshAgent;
+        [SerializeField] private SpriteRenderer _spriteRenderer;
+
         [SerializeField] private GameObject _target = null;
 
         [SerializeField] private Statistic _maxHealth = null;
@@ -44,16 +47,18 @@ namespace ProtoRoguelite.Characters
         #region Private Fields
         private MainManager _mainManager = null;
         private CharacterManager _characterManager = null;
-
-        private NavMeshAgent _navMeshAgent;
         #endregion Private Fields
 
         #region Properties
+        public SpriteRenderer SpriteRenderer => _spriteRenderer;
+
         public Team Team
         {
             get { return _team; }
             set { _team = value; }
         }
+
+        public Weapon Weapon => _weapon;
 
         public GameObject Target => _target;
         #endregion Properties
@@ -72,7 +77,6 @@ namespace ProtoRoguelite.Characters
         private void Awake()
         {
             //navMeshAgent initialization
-            _navMeshAgent = GetComponent<NavMeshAgent>();
             _navMeshAgent.updateRotation = false;
             _navMeshAgent.updateUpAxis = false;
         }
