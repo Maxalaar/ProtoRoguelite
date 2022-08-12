@@ -68,10 +68,6 @@ public class Team
         character.Team = this;
         character.SpriteRenderer.color = _color;
 
-        if (character.Weapon != null)
-        {
-            character.Weapon.UpdateMeshColor(Color, 0.25f);
-        }
     }
 
     public void RemoveCharacter(Character character)

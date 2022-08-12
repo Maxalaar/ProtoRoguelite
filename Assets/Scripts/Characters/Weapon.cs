@@ -20,11 +20,17 @@ namespace ProtoRoguelite.Characters.Weapons
         private Statistic _attackCooldown;
         private Statistic _attackAnticipation;
 
+        private float _maxAlphaValue = 0.25f;
+        private float _minAlphaValue = 0.05f;
+        private float _curentAlphaValue = 0.05f;
+
         private Character _owner;
         private List<Character> _collidingCharacters = new List<Character>();
 
         private Coroutine _attackCoroutine = null;
 
+        private PolygonCollider2D _collider = null;
+        private Mesh _mesh = null;
         private MeshFilter _meshFilter = null;
         private MeshRenderer _meshRenderer = null;
         #endregion Private Fields
@@ -57,7 +63,8 @@ namespace ProtoRoguelite.Characters.Weapons
             if (characterCollision == null)
                 return;
 
-            if (_owner == null || _owner.Target == null
+            if (_owner == null
+                || _owner.Target == null
                 || !_owner.Team.AdeversaryTeams.Contains(characterCollision.Team)
                 || _collidingCharacters.Contains(characterCollision))
                 return;
@@ -93,7 +100,11 @@ namespace ProtoRoguelite.Characters.Weapons
         #region Private Methods
         private void GenerateCollider()
         {
-            PolygonCollider2D collider = gameObject.AddComponent<PolygonCollider2D>();
+            if (_collider == null)
+            {
+                _collider = gameObject.AddComponent<PolygonCollider2D>();
+            }
+            _collider.transform.localRotation = _owner.transform.localRotation;
 
             Vector2[] points = new Vector2[pointsInArcNumber + 2];
 
@@ -105,55 +116,50 @@ namespace ProtoRoguelite.Characters.Weapons
                 points[i] = radius * new Vector2(Mathf.Cos(angleTemp), Mathf.Sin(angleTemp));
             }
 
-            collider.points = points;
+            _collider.points = points;
 
-            collider.isTrigger = true;
+            _collider.isTrigger = true;
 
             GenerateMesh();
         }
 
         private void GenerateMesh()
         {
-            PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
 
-            if (collider == null || _meshFilter == null || _meshRenderer == null)
+            if (_collider == null || _meshFilter == null || _meshRenderer == null)
+            {
                 return;
+            }
+        
+            _mesh = _collider.CreateMesh(false, false);
+            _meshFilter.mesh = _mesh;
 
-            Mesh newMesh = collider.CreateMesh(false, false);
-
-            _meshFilter.mesh = newMesh;
-
-            //UpdateMeshColor(_owner.Team.Color, 0.25f);
-
-            _meshFilter.transform.localRotation = transform.localRotation;
-        }
-
-        private void DestroyMesh()
-        {
-            PolygonCollider2D collider = GetComponent<PolygonCollider2D>();
-
-            if (collider == null || _meshFilter == null)
-                return;
-
-            _meshFilter.mesh = null;
+            UpdateMeshColor();
         }
 
         private IEnumerator CoAttack()
         {
-            IsAttacking = true;
+            int alphaNumSteps = 30;
+            float alphaTimeSteps = _attackAnticipation.Current / alphaNumSteps;
 
-            
+            IsAttacking = true;
             _owner.StopMoving();
 
-            //attack anticipation
-            yield return new WaitForSeconds(_attackAnticipation.Current);
+            // attack anticipation
+            for (int i = 0; i < alphaNumSteps; i++)
+            {
+                yield return new WaitForSeconds(alphaTimeSteps);
+                _curentAlphaValue = ((float)i/alphaNumSteps) * _maxAlphaValue;
+                UpdateMeshColor();
+            }
+            _curentAlphaValue = _minAlphaValue;
+            UpdateMeshColor();
 
             //if no enemies are in range anymore, return
             if (_collidingCharacters.Count == 0)
             {
                 IsAttacking = false;
                 _attackCoroutine = null;
-                //DestroyMesh();
                 yield break; 
             }
 
@@ -169,7 +175,6 @@ namespace ProtoRoguelite.Characters.Weapons
 
             IsAttacking = false;
             _attackCoroutine = null;
-            //DestroyMesh();
         }
         #endregion Private Methods
 
@@ -216,10 +221,10 @@ namespace ProtoRoguelite.Characters.Weapons
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
         }
 
-        public void UpdateMeshColor(Color color, float alphaValue)
+        public void UpdateMeshColor()
         {
-            Color newColor = color;
-            newColor.a = alphaValue;
+            Color newColor = _owner.SpriteRenderer.color;
+            newColor.a = _curentAlphaValue;
 
             float darkFactor = 0.5f;
 

@@ -110,16 +110,10 @@ namespace ProtoRoguelite.Characters
             _textMeshHealth.text = _currentHealth.ToString();
         }
 
-        public void ResetValues()
-        {
-            _currentHealth = Mathf.RoundToInt(_maxHealth.Base);
-            _textMeshHealth.text = _currentHealth.ToString();
-        }
-
         public void UpdateCharacter()
         {
             if (_target == null || _target.gameObject.activeInHierarchy == false)
-                SetTargetRandomAdeversaryCharacter();
+                SetTargetRandomAdeversary();
 
             if (_target == null || _target.gameObject.activeInHierarchy == false)
             {
@@ -157,7 +151,7 @@ namespace ProtoRoguelite.Characters
             _navMeshAgent.isStopped = false;
         }
 
-        public void SetTargetRandomAdeversaryCharacter()
+        public void SetTargetRandomAdeversary()
         {
             if (_navMeshAgent == null)
             {

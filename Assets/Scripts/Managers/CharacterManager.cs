@@ -60,7 +60,6 @@ namespace ProtoRoguelite.Managers
                 },
                 character => {
                     character.gameObject.SetActive(false);
-                    character.GetComponent<Character>()?.ResetValues();
                 },
                 character => {
                     Destroy(character.gameObject);
@@ -73,18 +72,16 @@ namespace ProtoRoguelite.Managers
             for (int i = 0; i < nbBlue; i++)
             {                
                 Character character = AddCharacter(blueTeam);
-                character?.Init(_characterArchetypeSO);
             }
 
             for (int i = 0; i < nbRed; i++)
             {
                 Character character = AddCharacter(redTeam);
-                character?.Init(_characterArchetypeSO);
             }
 
             foreach (Character character in _characters)
             {
-                character.SetTargetRandomAdeversaryCharacter();
+                character.SetTargetRandomAdeversary();
             }
 
             InvokeRepeating("FillTeamCharacters", 15f, 15f);
@@ -128,6 +125,7 @@ namespace ProtoRoguelite.Managers
         {
             GameObject characterInstance = _charactersPool.Get();
             Character character = characterInstance.GetComponent<Character>();
+            character?.Init(_characterArchetypeSO);
 
             if (character == null)
             {
