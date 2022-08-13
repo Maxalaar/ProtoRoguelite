@@ -155,9 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2aed2c5ceaa932840ba257eda1355530, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pointsInArcNumber: 5
-  radius: 0.6
-  angle: 1.2
+  _pointsInArcNumber: 5
 --- !u!23 &4435921838399212174
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -345,7 +343,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 8344349570364077734}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.25
+  m_Radius: 0.125
   m_Speed: 3.5
   m_Acceleration: 8
   avoidancePriority: 50
@@ -354,8 +352,8 @@ NavMeshAgent:
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
-  m_Height: 0.5
-  m_BaseOffset: 0.25
+  m_Height: 0.25
+  m_BaseOffset: 0.125
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!61 &286142666759288837

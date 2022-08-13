@@ -12,7 +12,7 @@ namespace ProtoRoguelite.Managers
         #endregion Serialized Fields
 
         #region Private Fields
-        private float _timeScale = 1f;
+        // private float _timeScale = 1f;
         #endregion Private Fields
 
         #region Properties

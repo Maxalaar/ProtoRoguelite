@@ -53,6 +53,12 @@ namespace ProtoRoguelite.Characters
         #region Properties
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
 
+        public GameObject Target
+        {
+            get { return _target; }
+            set { _target = value; }
+        }
+
         public Team Team
         {
             get { return _team; }
@@ -61,7 +67,7 @@ namespace ProtoRoguelite.Characters
 
         public Weapon Weapon => _weapon;
 
-        public GameObject Target => _target;
+        // public GameObject Target => _target;
         #endregion Properties
 
         #endregion Fields
@@ -86,8 +92,8 @@ namespace ProtoRoguelite.Characters
         #region Private Methods
         private void Die()
         {
-            _characterManager.RemoveCharacter(this);
             _target = null;
+            _characterManager.RemoveCharacter(this);
         }
         #endregion Private Methods
 
@@ -108,42 +114,38 @@ namespace ProtoRoguelite.Characters
             _weapon.Init(characterArchetypeSO.WeaponSO, this);
 
             _textMeshHealth.text = _currentHealth.ToString();
+            // _navMeshAgent.stoppingDistance = _weapon.Reach.Current * 0.8f;
+            StartMoving();
         }
 
         public void UpdateCharacter()
         {
+
             if (_target == null || _target.gameObject.activeInHierarchy == false)
                 SetTargetRandomAdeversary();
 
             if (_target == null || _target.gameObject.activeInHierarchy == false)
             {
                 _target = null;
-                StopMoving();
                 return;
             }
 
-            _weapon.UpdateWeapon();
+            if (_navMeshAgent != null && _navMeshAgent.enabled == true)
+            {
+                _navMeshAgent.SetDestination(_target.transform.position);
+            }
 
-            if (_weapon != null && _weapon.IsAttacking)
-                return;
-
-            //move toward target
-            StartMoving();
-
-            Vector3 targetPos = _target.transform.position;
-
-            _navMeshAgent.SetDestination(targetPos);
-
-            //rotate weapon toward target
-            if (_weapon == null)
-                return;
-
-            _weapon.RotateTowardTarget(_target.transform);
+            if (_weapon != null)
+            {
+                _weapon.UpdateWeapon();
+                _weapon.RotateTowardTarget(_target.transform);
+            }
         }
 
         public void StopMoving()
         {
             _navMeshAgent.isStopped = true;
+            _navMeshAgent.velocity = new Vector3(0, 0, 0);
         }
 
         public void StartMoving()
