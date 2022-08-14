@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6757270010068270603}
   - component: {fileID: 4847886606149858188}
+  - component: {fileID: 1240361976590654355}
   m_Layer: 0
   m_Name: CameraManager
   m_TagString: Untagged
@@ -44,3 +45,46 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5475d9dbe74a1d408b2b3c7716b569d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _moveSpeed: 0.05
+  _zoomSpeed: 1
+  _smoothSpeed: 2
+  _minOrtho: 1
+  _maxOrtho: 20
+--- !u!114 &1240361976590654355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 888744660926688751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: de7d3930998aa7b4f8b259ef708a3477, type: 3}
+  m_NotificationBehavior: 0
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f5021c8a-f517-4de8-a03f-98f0f8958284
+    m_ActionName: Battle/Move[/Keyboard/z,/Keyboard/s,/Keyboard/q,/Keyboard/d,/Keyboard/upArrow,/Keyboard/downArrow,/Keyboard/leftArrow,/Keyboard/rightArrow]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 7a67073c-0dda-4cae-9666-bc7506369223
+    m_ActionName: Battle/Zoom[/Mouse/scroll]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: Mouse&Keyboard
+  m_DefaultActionMap: Battle
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
