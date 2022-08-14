@@ -127,6 +127,7 @@ namespace ProtoRoguelite.Characters
             if (_target == null || _target.gameObject.activeInHierarchy == false)
             {
                 _target = null;
+                StopMoving();
                 return;
             }
 
