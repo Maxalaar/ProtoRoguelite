@@ -34,12 +34,19 @@ namespace ProtoRoguelite.Characters
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMesh _textMeshHealth;
 
-        [SerializeField] private GameObject _target = null;
+        [SerializeField] private GameObject _target;
 
         [SerializeField] private Statistic _maxHealth = null;
         [SerializeField] private Statistic _speed = null;
         [SerializeField] private Statistic _size = null;
         [SerializeField] private int _currentHealth = 10;
+
+        private List<Character> _collidingCharacters;
+        private PolygonCollider2D _collider = null;
+
+        private bool _isAbleMove;
+        private bool _isAbleAttack;
+        private bool _isAttacking;
 
         [SerializeField] private Team _team;
         [SerializeField] private Weapon _weapon;
@@ -52,6 +59,24 @@ namespace ProtoRoguelite.Characters
 
         #region Properties
         public SpriteRenderer SpriteRenderer => _spriteRenderer;
+
+        public bool IsAbleAttack
+        {
+            get { return _isAbleAttack; }
+            set { _isAbleAttack = value; }
+        }
+
+        public bool IsAbleMove
+        {
+            get { return _isAbleMove; }
+            set { _isAbleMove = value; }
+        }
+
+        public bool IsAttacking
+        {
+            get { return _isAttacking; }
+            set { _isAttacking = value; }
+        }
 
         public GameObject Target
         {
@@ -92,8 +117,60 @@ namespace ProtoRoguelite.Characters
         #region Private Methods
         private void Die()
         {
-            _target = null;
             _characterManager.RemoveCharacter(this);
+        }
+        
+        private void OnTriggerEnter2D(Collider2D collision)
+        {
+            Character characterCollision = collision.gameObject.GetComponent<Character>();
+            
+            if (characterCollision == null)
+                return;
+            
+            if (!_team.AdversaryTeams.Contains(characterCollision.Team)
+                || _collidingCharacters.Contains(characterCollision))
+                return;
+
+            _collidingCharacters.Add(characterCollision);
+        }
+
+        private void OnTriggerExit2D(Collider2D collision)
+        {
+            Character characterCollision = collision.gameObject.GetComponent<Character>();
+            
+            if (characterCollision == null)
+                return;
+
+            if (!_team.AdversaryTeams.Contains(characterCollision.Team)
+                || !_collidingCharacters.Contains(characterCollision))
+                return;
+
+            _collidingCharacters.Remove(characterCollision);
+        }
+
+        private void GenerateCollider()
+        {
+            if (_collider == null)
+            {
+                _collider = gameObject.AddComponent<PolygonCollider2D>();
+            }
+
+            int pointsInArcNumber = 20;
+            float radius = 5;
+
+            Vector2[] points = new Vector2[pointsInArcNumber + 2];
+
+            points[0] = Vector2.zero;
+
+            for (int i = 1; i < pointsInArcNumber + 2; i++)
+            {
+                float angleTemp = radius * ((float)(i-1) / (float)pointsInArcNumber) - 0.5f * 2 * (float)Math.PI;
+                points[i] = radius * new Vector2(Mathf.Cos(angleTemp), Mathf.Sin(angleTemp));
+            }
+
+            _collider.points = points;
+
+            _collider.isTrigger = true;
         }
         #endregion Private Methods
 
@@ -106,6 +183,9 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
+            // GenerateCollider();
+            _target = null;
+
             _maxHealth = characterArchetypeSO.MaxHealth;
             _currentHealth = Mathf.RoundToInt(_maxHealth.Base);
             _speed = characterArchetypeSO.Speed;
@@ -114,19 +194,24 @@ namespace ProtoRoguelite.Characters
             _weapon.Init(characterArchetypeSO.WeaponSO, this);
 
             _textMeshHealth.text = _currentHealth.ToString();
+            _collidingCharacters = new List<Character>();
             // _navMeshAgent.stoppingDistance = _weapon.Reach.Current * 0.8f;
-            StartMoving();
+            _isAbleMove = true;
+            _isAbleAttack = true;
+            _isAttacking = false;
         }
 
         public void UpdateCharacter()
         {
-
+            // Set target
             if (_target == null || _target.gameObject.activeInHierarchy == false)
-                SetTargetRandomAdeversary();
+                // SetTargetRandomAdversary();
+                SetTargetNearestAdversary();
 
             if (_target == null || _target.gameObject.activeInHierarchy == false)
             {
                 _target = null;
+                StopMoving();
                 return;
             }
 
@@ -135,10 +220,41 @@ namespace ProtoRoguelite.Characters
                 _navMeshAgent.SetDestination(_target.transform.position);
             }
 
+            // Moving
             if (_weapon != null)
             {
-                _weapon.UpdateWeapon();
+                if (_weapon.CollidingCharacters.Count > 0)
+                {
+                    _isAbleMove = false;
+                }
+                else
+                {
+                    _isAbleMove = true;
+                }
+            }
+
+            if (_isAbleMove == true)
+            {
+                StartMoving();
+            }
+            else
+            {
+                StopMoving();
+            }
+
+            // Attack
+            if (_weapon != null)
+            {
                 _weapon.RotateTowardTarget(_target.transform);
+                
+                if (_weapon.CollidingCharacters.Count > 0 && _isAbleAttack)
+                {
+                    _weapon.Attack();
+                }
+                else if(_weapon.CollidingCharacters.Count == 0 && _isAttacking)
+                {
+                    _weapon.DisableAttack();
+                }
             }
         }
 
@@ -153,7 +269,7 @@ namespace ProtoRoguelite.Characters
             _navMeshAgent.isStopped = false;
         }
 
-        public void SetTargetRandomAdeversary()
+        public void SetTargetRandomAdversary()
         {
             if (_navMeshAgent == null)
             {
@@ -167,27 +283,80 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
-            List<Team> adeversaryTeams = _team.AdeversaryTeams;
+            List<Team> adversaryTeams = _team.AdversaryTeams;
 
-            if (adeversaryTeams.Count <= 0)
+            if (adversaryTeams.Count <= 0)
             {
-                Debug.LogWarning("Attempt to add target character to character but his team does not have an adeversary team.");
+                Debug.LogWarning("Attempt to add target character to character but his team does not have an adversary team.");
                 return;
             }
 
-            int randomIndex = UnityEngine.Random.Range(0, adeversaryTeams.Count);
-            Team randomAdversaryTeam = adeversaryTeams[randomIndex];
+            int randomIndex = UnityEngine.Random.Range(0, adversaryTeams.Count);
+            Team randomAdversaryTeam = adversaryTeams[randomIndex];
 
-            List<Character> adeversaryCharacters = randomAdversaryTeam.Characters;
+            List<Character> adversaryCharacters = randomAdversaryTeam.Characters;
 
-            if (adeversaryCharacters.Count <= 0)
+            randomIndex = UnityEngine.Random.Range(0, adversaryCharacters.Count);
+            _target = adversaryCharacters[randomIndex].gameObject;
+        }
+
+        public void SetTargetNearestAdversary()
+        {
+            if (_navMeshAgent == null)
             {
-                //Debug.LogWarning("Attempt to add target character to character but adeversary team has no character.");
+                Debug.LogWarning("Attempt to add target character to character but he as no navMeshAgent.");
                 return;
             }
 
-            randomIndex = UnityEngine.Random.Range(0, adeversaryCharacters.Count);
-            _target = adeversaryCharacters[randomIndex].gameObject;
+            if (_team == null)
+            {
+                Debug.LogWarning("Attempt to add target character to character but he as no team.");
+                return;
+            }
+
+            List<Team> adversaryTeams = _team.AdversaryTeams;
+
+            if (adversaryTeams.Count <= 0)
+            {
+                Debug.LogWarning("Attempt to add target character to character but his team does not have an adversary team.");
+                return;
+            }
+
+            List<Character> adversaryCharacters = new List<Character>();
+            
+            if (_collidingCharacters.Count > 0)
+            {
+                adversaryCharacters = _collidingCharacters;
+            }
+            else
+            {
+                foreach (Team adversaryTeam in adversaryTeams)
+                {
+                    adversaryCharacters.AddRange(adversaryTeam.Characters);
+                }
+            }
+            
+            Character nearestCharacter = null;
+            float nearestDistance = float.MaxValue;
+
+            foreach (Character adversaryCharacter in adversaryCharacters)
+            {
+                float distanceTemp = Math.Abs(adversaryCharacter.transform.position.x - this.transform.position.x) + Math.Abs(adversaryCharacter.transform.position.y - this.transform.position.y) + Math.Abs(adversaryCharacter.transform.position.z - this.transform.position.z);
+                if (distanceTemp < nearestDistance)
+                {
+                    nearestCharacter = adversaryCharacter;
+                    nearestDistance = distanceTemp;
+                }  
+            }
+
+            if (nearestCharacter == null)
+            {
+                _target = null;
+            }
+            else
+            {
+                _target = nearestCharacter.gameObject;
+            }
         }
 
         public void TakeDamage(int damage)

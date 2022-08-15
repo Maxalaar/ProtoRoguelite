@@ -45,7 +45,7 @@ namespace ProtoRoguelite.Managers
             Team blueTeam = new Team("Blue", Color.blue);
             Team redTeam = new Team("Red", Color.red);
 
-            blueTeam.AddAdeversary(redTeam);
+            blueTeam.AddAdversary(redTeam);
 
             _teams.Add(blueTeam);
             _teams.Add(redTeam);
@@ -81,7 +81,7 @@ namespace ProtoRoguelite.Managers
 
             foreach (Character character in _characters)
             {
-                character.SetTargetRandomAdeversary();
+                character.SetTargetRandomAdversary();
             }
 
             InvokeRepeating("FillTeamCharacters", 15f, 15f);

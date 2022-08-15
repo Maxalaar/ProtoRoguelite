@@ -38,6 +38,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
         #region Properties
         public Statistic Reach => _reach;
+        public List<Character> CollidingCharacters => _collidingCharacters;
         #endregion Properties
 
         public int _pointsInArcNumber = 5;
@@ -64,7 +65,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
             if (_owner == null
                 || _owner.Target == null
-                || !_owner.Team.AdeversaryTeams.Contains(characterCollision.Team)
+                || !_owner.Team.AdversaryTeams.Contains(characterCollision.Team)
                 || _collidingCharacters.Contains(characterCollision))
                 return;
 
@@ -81,7 +82,7 @@ namespace ProtoRoguelite.Characters.Weapons
                 return;
 
             if (_owner == null || _owner.Target == null
-                || !_owner.Team.AdeversaryTeams.Contains(characterCollision.Team)
+                || !_owner.Team.AdversaryTeams.Contains(characterCollision.Team)
                 || !_collidingCharacters.Contains(characterCollision))
                 return;
 
@@ -98,7 +99,6 @@ namespace ProtoRoguelite.Characters.Weapons
 
             StopCoroutine(_attackCoroutine);
             _attackCoroutine = null;
-            _owner.StartMoving();
         }
         #endregion Unity Interface
 
@@ -118,7 +118,7 @@ namespace ProtoRoguelite.Characters.Weapons
             for (int i = 1; i < _pointsInArcNumber + 2; i++)
             {
                 float angleTemp = _angle.Current * ((float)(i-1) / (float)_pointsInArcNumber) - 0.5f * _angle.Current;
-                points[i] = _reach.Current * new Vector2(Mathf.Cos(angleTemp), Mathf.Sin(angleTemp)); // /!\
+                points[i] = _reach.Current * new Vector2(Mathf.Cos(angleTemp), Mathf.Sin(angleTemp));
             }
 
             _collider.points = points;
@@ -144,7 +144,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
         private IEnumerator CoAttack()
         {
-            _owner.StopMoving();
+            // _owner.StopMoving();
 
             // attack anticipation
             int alphaNumSteps = 30;
@@ -164,6 +164,8 @@ namespace ProtoRoguelite.Characters.Weapons
 
             UpdateMeshColor(0f);
             DisableCoAttack();
+            _owner.IsAttacking = false;
+            _owner.IsAbleMove = true;
 
             _cooldownCoroutine = StartCoroutine(CoCooldown());
         }
@@ -174,6 +176,7 @@ namespace ProtoRoguelite.Characters.Weapons
             yield return new WaitForSeconds(_attackCooldown.Current);
             StopCoroutine(_cooldownCoroutine);
             _cooldownCoroutine = null;
+            _owner.IsAbleAttack = true;
             UpdateMeshColor(_minAlphaValue);
         }
         #endregion Private Methods
@@ -205,26 +208,20 @@ namespace ProtoRoguelite.Characters.Weapons
             GenerateCollider();
         }
 
-        public void UpdateWeapon()
+        public void Attack()
         {
-            if (_collidingCharacters.Count > 0)
-            {
-                _owner.StopMoving();
-            }
-            else
-            {
-                _owner.StartMoving();
-            }
+            _owner.IsAbleMove = false;
+            _owner.IsAbleAttack = false;
+            _owner.IsAttacking = true;
+            _attackCoroutine = StartCoroutine(CoAttack());
+        }
 
-            if (_collidingCharacters.Count > 0 && _attackCoroutine == null && _cooldownCoroutine == null)
-            {
-                _attackCoroutine = StartCoroutine(CoAttack());
-            }
-            else if (_collidingCharacters.Count == 0 && _attackCoroutine != null && _cooldownCoroutine == null)
-            {   
-                UpdateMeshColor(_minAlphaValue);
-                DisableCoAttack();
-            }
+        public void DisableAttack()
+        {
+            DisableCoAttack();
+            _owner.IsAttacking = false;
+            _owner.IsAbleAttack = true;
+            _owner.IsAbleMove = true;
         }
 
         public void RotateTowardTarget(Transform target)

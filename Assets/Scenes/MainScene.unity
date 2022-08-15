@@ -413,11 +413,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2118926918374079703, guid: 0c81b33443cbee646986b7c40dc41ce9, type: 3}
       propertyPath: nbRed
-      value: 4
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 2118926918374079703, guid: 0c81b33443cbee646986b7c40dc41ce9, type: 3}
       propertyPath: nbBlue
-      value: 4
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 3296787448860718597, guid: 0c81b33443cbee646986b7c40dc41ce9, type: 3}
       propertyPath: m_Name
