@@ -22,7 +22,7 @@ public class Team
     #region Properties
     public Color Color => _color;
 
-    public List<Team> AdeversaryTeams
+    public List<Team> AdversaryTeams
     {
         get { return _adeversaryTeams; }
     }
@@ -81,18 +81,18 @@ public class Team
         character.Team = null;
     }
 
-    public void AddAdeversary(Team newAdeversary)
+    public void AddAdversary(Team newAdversary)
     {
-        if (_adeversaryTeams.Contains(newAdeversary))
+        if (_adeversaryTeams.Contains(newAdversary))
         {
             return;
         }
-        if (_allyTeams.Contains(newAdeversary))
+        if (_allyTeams.Contains(newAdversary))
         {
-            _allyTeams.Remove(newAdeversary);
+            _allyTeams.Remove(newAdversary);
         }
-        _adeversaryTeams.Add(newAdeversary);
-        newAdeversary.AddAdeversary(this);
+        _adeversaryTeams.Add(newAdversary);
+        newAdversary.AddAdversary(this);
     }
     #endregion Public Methods
 

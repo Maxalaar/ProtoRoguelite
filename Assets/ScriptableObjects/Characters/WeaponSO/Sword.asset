@@ -23,19 +23,19 @@ MonoBehaviour:
     _type: 7
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 1
+    _base: 0.5
   _angle:
     _serialized: 1
     _type: 8
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 0.7853982
+    _base: 0.785398
   _attackCooldown:
     _serialized: 1
     _type: 9
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 1
+    _base: 3
   _attackAnticipation:
     _serialized: 1
     _type: 10
