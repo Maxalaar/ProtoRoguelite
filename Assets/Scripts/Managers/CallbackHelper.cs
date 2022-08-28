@@ -17,6 +17,15 @@ namespace ProtoRoguelite.Managers
 
         #region TimeManager
         public void SetTimeScale(float timeScale) => _mainManager.TimeManager.SetTimeScale(timeScale);
+
+        public void RestartBattle()
+        {
+            //reset battlefield
+            _mainManager?.BattlefieldManager?.Init();
+
+            //reset teams
+            _mainManager?.CharacterManager.ResetTeams();
+        }
         #endregion TimeManager
     }
 }

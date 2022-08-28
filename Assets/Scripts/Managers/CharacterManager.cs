@@ -26,8 +26,6 @@ namespace ProtoRoguelite.Managers
 
         private List<Character> _characters = new List<Character>();
         private ObjectPool<GameObject> _charactersPool;
-
-        private float _spawnAmplitude = 5f;
         #endregion Private Fields
 
         #region Properties
@@ -133,7 +131,9 @@ namespace ProtoRoguelite.Managers
                 return null;
             }
 
-            Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-_spawnAmplitude, _spawnAmplitude), UnityEngine.Random.Range(-_spawnAmplitude, _spawnAmplitude), 0);
+            float width = _mainManager.BattlefieldManager.BackgroundWidth / 2;
+            float height = _mainManager.BattlefieldManager.BackgroundHeight / 2;
+            Vector3 spawnPos = new Vector3(UnityEngine.Random.Range(-width, width), UnityEngine.Random.Range(-height, height), 0);
             character.transform.position = spawnPos;
 
             if (_characters.Contains(character) == true)
@@ -178,6 +178,18 @@ namespace ProtoRoguelite.Managers
                 }
                 character.Team.RemoveCharacter(character);
             }
+        }
+
+        public void ResetTeams()
+        {
+            Character[] charactersTemp = _characters.ToArray();
+
+            foreach (Character character in charactersTemp)
+            {
+                RemoveCharacter(character);
+            }
+
+            FillTeamCharacters();
         }
         #endregion Public Methods
 

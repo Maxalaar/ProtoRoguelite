@@ -215,7 +215,7 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
-            if (_navMeshAgent != null && _navMeshAgent.enabled == true)
+            if (_navMeshAgent != null && _navMeshAgent.enabled == true && _navMeshAgent.isOnNavMesh)
             {
                 _navMeshAgent.SetDestination(_target.transform.position);
             }
@@ -260,12 +260,18 @@ namespace ProtoRoguelite.Characters
 
         public void StopMoving()
         {
+            if (!_navMeshAgent.isOnNavMesh || !_navMeshAgent.isActiveAndEnabled)
+                return;
+
             _navMeshAgent.isStopped = true;
             _navMeshAgent.velocity = new Vector3(0, 0, 0);
         }
 
         public void StartMoving()
         {
+            if (!_navMeshAgent.isOnNavMesh || !_navMeshAgent.isActiveAndEnabled)
+                return;
+
             _navMeshAgent.isStopped = false;
         }
 

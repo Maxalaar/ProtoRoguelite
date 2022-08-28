@@ -49,6 +49,10 @@ MonoBehaviour:
   _obstaclePrefab: {fileID: 4058596299696492867, guid: cdec8360f13b6ef4dbcca6c609ad8a07, type: 3}
   _navMeshSurface: {fileID: 7014054299733679286}
   _obstaclesNumber: 5
+  _backgroundMinWidth: 15
+  _backgroundMaxWidth: 25
+  _backgroundMinHeight: 8
+  _backgroundMaxHeight: 15
 --- !u!1001 &150501277247529500
 PrefabInstance:
   m_ObjectHideFlags: 0
