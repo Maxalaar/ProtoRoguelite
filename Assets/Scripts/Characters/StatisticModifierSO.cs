@@ -51,7 +51,7 @@ namespace ProtoRoguelite.Statistics
 
         #endregion Methods
 
-
+#if UNITY_EDITOR
         [CustomEditor(typeof(StatisticModifierSO))]
         public class StatisticModifierEditor : Editor
         {
@@ -79,5 +79,6 @@ namespace ProtoRoguelite.Statistics
                 EditorUtility.SetDirty(target);
             }
         }
+#endif //UNITY_EDITOR
     }
 }
