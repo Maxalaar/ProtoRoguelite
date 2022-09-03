@@ -41,20 +41,25 @@ namespace ProtoRoguelite.Characters
         [SerializeField] private Statistic _size = null;
         [SerializeField] private int _currentHealth = 10;
 
-        private List<Character> _collidingCharacters;
-        private PolygonCollider2D _collider = null;
-
-        private bool _isAbleMove;
-        private bool _isAbleAttack;
-        private bool _isAttacking;
-
         [SerializeField] private Team _team;
         [SerializeField] private Weapon _weapon;
+
+        [SerializeField] private Collider2D _bodyCollider;
+        
+        [SerializeField] private float _nearestTargetRadius = 1f;
         #endregion Serialized Fields
 
         #region Private Fields
         private MainManager _mainManager = null;
         private CharacterManager _characterManager = null;
+
+        private List<Character> _collidingCharacters;
+
+        private bool _isAbleMove;
+        private bool _isAbleAttack;
+        private bool _isAttacking;
+
+        private CircleCollider2D _nearestTargetCollider;
         #endregion Private Fields
 
         #region Properties
@@ -92,7 +97,7 @@ namespace ProtoRoguelite.Characters
 
         public Weapon Weapon => _weapon;
 
-        // public GameObject Target => _target;
+        public Collider2D BodyCollider => _bodyCollider;
         #endregion Properties
 
         #endregion Fields
@@ -112,21 +117,14 @@ namespace ProtoRoguelite.Characters
             _navMeshAgent.updateRotation = false;
             _navMeshAgent.updateUpAxis = false;
         }
-        #endregion Unity Interface
 
-        #region Private Methods
-        private void Die()
-        {
-            _characterManager.RemoveCharacter(this);
-        }
-        
         private void OnTriggerEnter2D(Collider2D collision)
         {
             Character characterCollision = collision.gameObject.GetComponent<Character>();
-            
+
             if (characterCollision == null)
                 return;
-            
+
             if (!_team.AdversaryTeams.Contains(characterCollision.Team)
                 || _collidingCharacters.Contains(characterCollision))
                 return;
@@ -137,7 +135,7 @@ namespace ProtoRoguelite.Characters
         private void OnTriggerExit2D(Collider2D collision)
         {
             Character characterCollision = collision.gameObject.GetComponent<Character>();
-            
+
             if (characterCollision == null)
                 return;
 
@@ -147,30 +145,23 @@ namespace ProtoRoguelite.Characters
 
             _collidingCharacters.Remove(characterCollision);
         }
+        #endregion Unity Interface
+
+        #region Private Methods
+        private void Die()
+        {
+            _characterManager.RemoveCharacter(this);
+        }
 
         private void GenerateCollider()
         {
-            if (_collider == null)
+            if (_nearestTargetCollider == null)
             {
-                _collider = gameObject.AddComponent<PolygonCollider2D>();
+                _nearestTargetCollider = gameObject.AddComponent<CircleCollider2D>();
             }
 
-            int pointsInArcNumber = 20;
-            float radius = 5;
-
-            Vector2[] points = new Vector2[pointsInArcNumber + 2];
-
-            points[0] = Vector2.zero;
-
-            for (int i = 1; i < pointsInArcNumber + 2; i++)
-            {
-                float angleTemp = radius * ((float)(i-1) / (float)pointsInArcNumber) - 0.5f * 2 * (float)Math.PI;
-                points[i] = radius * new Vector2(Mathf.Cos(angleTemp), Mathf.Sin(angleTemp));
-            }
-
-            _collider.points = points;
-
-            _collider.isTrigger = true;
+            _nearestTargetCollider.radius = _nearestTargetRadius;
+            _nearestTargetCollider.isTrigger = true;
         }
         #endregion Private Methods
 
@@ -183,7 +174,7 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
-            // GenerateCollider();
+            //GenerateCollider();
             _target = null;
 
             _maxHealth = characterArchetypeSO.MaxHealth;
@@ -320,14 +311,6 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
-            List<Team> adversaryTeams = _team.AdversaryTeams;
-
-            if (adversaryTeams.Count <= 0)
-            {
-                Debug.LogWarning("Attempt to add target character to character but his team does not have an adversary team.");
-                return;
-            }
-
             List<Character> adversaryCharacters = new List<Character>();
             
             if (_collidingCharacters.Count > 0)
@@ -336,6 +319,14 @@ namespace ProtoRoguelite.Characters
             }
             else
             {
+                List<Team> adversaryTeams = _team.AdversaryTeams;
+
+                if (adversaryTeams.Count <= 0)
+                {
+                    Debug.LogWarning("Attempt to add target character to character but his team does not have an adversary team.");
+                    return;
+                }
+
                 foreach (Team adversaryTeam in adversaryTeams)
                 {
                     adversaryCharacters.AddRange(adversaryTeam.Characters);

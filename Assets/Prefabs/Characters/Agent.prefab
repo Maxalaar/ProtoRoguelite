@@ -282,6 +282,8 @@ MonoBehaviour:
     _base: 0
   _currentHealth: 10
   _weapon: {fileID: 417639212945196704}
+  _bodyCollider: {fileID: 286142666759288837}
+  _nearestTargetRadius: 1
 --- !u!212 &5394955902691905699
 SpriteRenderer:
   m_ObjectHideFlags: 0

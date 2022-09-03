@@ -33,6 +33,10 @@ namespace ProtoRoguelite.Managers
 
         #endregion Fields
 
+        #region Events
+        public event Action OnAllCharactersInstantiationEnd;
+        #endregion Events
+
         #region Methods
 
         #region Unity Interface
@@ -77,10 +81,7 @@ namespace ProtoRoguelite.Managers
                 Character character = AddCharacter(redTeam);
             }
 
-            foreach (Character character in _characters)
-            {
-                character.SetTargetRandomAdversary();
-            }
+            OnAllCharactersInstantiationEnd?.Invoke();
 
             InvokeRepeating("FillTeamCharacters", 15f, 15f);
         }
