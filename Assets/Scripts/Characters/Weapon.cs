@@ -158,7 +158,9 @@ namespace ProtoRoguelite.Characters.Weapons
             Character[] collidingCharactersTemp = _collidingCharacters.ToArray();
             foreach (Character collidingChararcter in collidingCharactersTemp)
             {
-                collidingChararcter.TakeDamage(Mathf.RoundToInt(_damage.Current));
+                Vector3 directionKnockbackVector3 = Vector3.Normalize(collidingChararcter.transform.position - _owner.transform.position);
+                // Vector2 directionKnockbackVector2 = new Vector2(directionKnockbackVector3.x, directionKnockbackVector3.z);
+                collidingChararcter.TakeDamage(Mathf.RoundToInt(_damage.Current), directionKnockbackVector3 * _knockBack.Current);
             }
 
             UpdateMeshColor(0f);

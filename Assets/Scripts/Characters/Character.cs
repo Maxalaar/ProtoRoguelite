@@ -165,13 +165,13 @@ namespace ProtoRoguelite.Characters
             _nearestTargetCollider.isTrigger = true;
         }
         
-        private IEnumerator coKnockback(Vector2 knockback)
-        {
-            _rigidBody2D.AddForce(knockback, ForceMode2D.Impulse);
-            yield return new WaitForSeconds(0.1f);
-            // _rigidBody2D.AddForce(-knockback, ForceMode2D.Impulse);
-            _rigidBody2D.velocity = Vector2.zero;
-        }
+        // private IEnumerator CoKnockback(Vector2 knockback)
+        // {
+        //     _rigidBody2D.AddForce(knockback, ForceMode2D.Impulse);
+        //     yield return new WaitForSeconds(0.05f);
+        //     // _rigidBody2D.AddForce(-knockback, ForceMode2D.Impulse);
+        //     // _rigidBody2D.velocity = Vector2.zero;
+        // }
         #endregion Private Methods
 
         #region Public Methods
@@ -215,12 +215,22 @@ namespace ProtoRoguelite.Characters
                 return;
             }
 
+            // Knockback
+            if (_rigidBody2D.velocity.magnitude < 0.1)
+            {
+                _rigidBody2D.velocity = Vector2.zero;
+            }
+            if (_rigidBody2D.velocity != Vector2.zero)
+            {
+                StopMoving();
+            }
+
+            // Moving
             if (_navMeshAgent != null && _navMeshAgent.enabled == true && _navMeshAgent.isOnNavMesh)
             {
                 _navMeshAgent.SetDestination(_target.transform.position);
             }
 
-            // Moving
             if (_weapon != null)
             {
                 if (_weapon.CollidingCharacters.Count > 0)
@@ -367,8 +377,8 @@ namespace ProtoRoguelite.Characters
 
         public void TakeDamage(int damage, Vector2? knockback = null)
         {
-            float coef = 10f;
-            knockback = new Vector2(UnityEngine.Random.Range(-1f, 1f)*coef, UnityEngine.Random.Range(-1f, 1f)*coef);
+            // float coef = 10f;
+            // knockback = new Vector2(UnityEngine.Random.Range(-1f, 1f)*coef, UnityEngine.Random.Range(-1f, 1f)*coef);
             _currentHealth -= damage;
 
             _textMeshHealth.text = _currentHealth.ToString();
@@ -381,7 +391,7 @@ namespace ProtoRoguelite.Characters
 
             if (knockback != null)
             {
-                // StartCoroutine(coKnockback((Vector2)knockback));
+                _rigidBody2D.AddForce((Vector2)knockback, ForceMode2D.Impulse);
             }
         }
         #endregion Public Methods
