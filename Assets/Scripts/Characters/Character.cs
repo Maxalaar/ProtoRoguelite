@@ -164,14 +164,6 @@ namespace ProtoRoguelite.Characters
             _nearestTargetCollider.radius = _nearestTargetRadius;
             _nearestTargetCollider.isTrigger = true;
         }
-        
-        // private IEnumerator CoKnockback(Vector2 knockback)
-        // {
-        //     _rigidBody2D.AddForce(knockback, ForceMode2D.Impulse);
-        //     yield return new WaitForSeconds(0.05f);
-        //     // _rigidBody2D.AddForce(-knockback, ForceMode2D.Impulse);
-        //     // _rigidBody2D.velocity = Vector2.zero;
-        // }
         #endregion Private Methods
 
         #region Public Methods
@@ -377,8 +369,6 @@ namespace ProtoRoguelite.Characters
 
         public void TakeDamage(int damage, Vector2? knockback = null)
         {
-            // float coef = 10f;
-            // knockback = new Vector2(UnityEngine.Random.Range(-1f, 1f)*coef, UnityEngine.Random.Range(-1f, 1f)*coef);
             _currentHealth -= damage;
 
             _textMeshHealth.text = _currentHealth.ToString();
