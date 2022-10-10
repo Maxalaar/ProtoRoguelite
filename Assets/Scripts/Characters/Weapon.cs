@@ -1,5 +1,6 @@
 namespace ProtoRoguelite.Characters.Weapons
 {
+    using ProtoRoguelite.Managers;
     using ProtoRoguelite.Statistics;
     using System.Collections;
     using System.Collections.Generic;
@@ -34,6 +35,10 @@ namespace ProtoRoguelite.Characters.Weapons
         private Mesh _mesh = null;
         private MeshFilter _meshFilter = null;
         private MeshRenderer _meshRenderer = null;
+
+        private MainManager _mainManager = null;
+
+        private bool _firstRotation = true;
         #endregion Private Fields
 
         #region Properties
@@ -65,6 +70,7 @@ namespace ProtoRoguelite.Characters.Weapons
 
             if (_owner == null
                 || _owner.Target == null
+                || collision != characterCollision.BodyCollider
                 || !_owner.Team.AdversaryTeams.Contains(characterCollision.Team)
                 || _collidingCharacters.Contains(characterCollision))
                 return;
@@ -89,16 +95,9 @@ namespace ProtoRoguelite.Characters.Weapons
             _collidingCharacters.Remove(characterCollision);
         }
 
-        private void DisableCoAttack()
+        private void OnDestroy()
         {
-            if (_attackCoroutine == null)
-            {
-                Debug.LogWarning("Attempt to stop _attackCoroutine but it is not active");
-                return;
-            }
-
-            StopCoroutine(_attackCoroutine);
-            _attackCoroutine = null;
+            _mainManager.CharacterManager.OnAllCharactersInstantiationEnd -= RefreshCollider;
         }
         #endregion Unity Interface
 
@@ -170,6 +169,18 @@ namespace ProtoRoguelite.Characters.Weapons
             _cooldownCoroutine = StartCoroutine(CoCooldown());
         }
 
+        private void DisableCoAttack()
+        {
+            if (_attackCoroutine == null)
+            {
+                Debug.LogWarning("Attempt to stop _attackCoroutine but it is not active");
+                return;
+            }
+
+            StopCoroutine(_attackCoroutine);
+            _attackCoroutine = null;
+        }
+
         private IEnumerator CoCooldown()
         {
             UpdateMeshColor(0f);
@@ -190,6 +201,8 @@ namespace ProtoRoguelite.Characters.Weapons
                 return;
             }
 
+            _mainManager = MainManager.instance;
+
             _owner = character;
 
             _damage = weaponSO.Damage;
@@ -204,8 +217,11 @@ namespace ProtoRoguelite.Characters.Weapons
 
             _collidingCharacters = new List<Character>();
 
+            _firstRotation = true;
 
             GenerateCollider();
+
+            _mainManager.CharacterManager.OnAllCharactersInstantiationEnd += RefreshCollider;
         }
 
         public void Attack()
@@ -233,6 +249,13 @@ namespace ProtoRoguelite.Characters.Weapons
 
             float newAngle = Mathf.Atan2(targetRelativePos.y, targetRelativePos.x) * Mathf.Rad2Deg;
             transform.rotation = Quaternion.Euler(new Vector3(0, 0, newAngle));
+
+            // refresh collider after weapon's first rotation to correctly detect nearest enemy
+            if (_firstRotation)
+            {
+                RefreshCollider();
+                _firstRotation = false;
+            }
         }
 
         public void UpdateMeshColor(float alphaValue = float.NaN)
@@ -252,6 +275,13 @@ namespace ProtoRoguelite.Characters.Weapons
             newColor.b *= darkFactor;
 
             _meshRenderer.material.color = newColor;
+        }
+
+        // reset collider to detect colliders already in range after collider's creation
+        public void RefreshCollider()
+        { 
+            _collider.enabled = false;
+            _collider.enabled = true;
         }
         #endregion Public Methods
 
