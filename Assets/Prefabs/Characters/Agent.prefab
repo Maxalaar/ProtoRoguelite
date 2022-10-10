@@ -259,6 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _navMeshAgent: {fileID: 3035140007333143963}
+  _rigidBody2D: {fileID: 8361144696279348869}
   _spriteRenderer: {fileID: 5394955902691905699}
   _textMeshHealth: {fileID: 2852374931612582426}
   _target: {fileID: 0}

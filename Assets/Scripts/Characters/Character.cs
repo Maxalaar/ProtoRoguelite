@@ -31,6 +31,7 @@ namespace ProtoRoguelite.Characters
 
         #region Serialized Fields
         [SerializeField] private NavMeshAgent _navMeshAgent;
+        [SerializeField] private Rigidbody2D _rigidBody2D;
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMesh _textMeshHealth;
 
@@ -171,6 +172,14 @@ namespace ProtoRoguelite.Characters
             _collider.points = points;
 
             _collider.isTrigger = true;
+        }
+        
+        private IEnumerator coKnockback(Vector2 knockback)
+        {
+            _rigidBody2D.AddForce(knockback, ForceMode2D.Impulse);
+            yield return new WaitForSeconds(0.1f);
+            // _rigidBody2D.AddForce(-knockback, ForceMode2D.Impulse);
+            _rigidBody2D.velocity = Vector2.zero;
         }
         #endregion Private Methods
 
@@ -365,8 +374,10 @@ namespace ProtoRoguelite.Characters
             }
         }
 
-        public void TakeDamage(int damage)
+        public void TakeDamage(int damage, Vector2? knockback = null)
         {
+            float coef = 10f;
+            knockback = new Vector2(UnityEngine.Random.Range(-1f, 1f)*coef, UnityEngine.Random.Range(-1f, 1f)*coef);
             _currentHealth -= damage;
 
             _textMeshHealth.text = _currentHealth.ToString();
@@ -374,6 +385,12 @@ namespace ProtoRoguelite.Characters
             if (_currentHealth <= 0)
             {
                 Die();
+                return;
+            }
+
+            if (knockback != null)
+            {
+                // StartCoroutine(coKnockback((Vector2)knockback));
             }
         }
         #endregion Public Methods
