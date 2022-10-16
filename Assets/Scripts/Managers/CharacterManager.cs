@@ -79,7 +79,7 @@ namespace ProtoRoguelite.Managers
             InvokeRepeating("FillTeamsCharacters", _refillTeamsDelay, _refillTeamsDelay);
         }
 
-        private void FixedUpdate()
+        private void Update()
         {
             if (_characters == null)
             {
@@ -100,7 +100,7 @@ namespace ProtoRoguelite.Managers
                 if (_characters[i] == null)
                     continue;
 
-                _characters[i].ApplyDamage(); 
+                _characters[i].ApplyDamage();
             }
         }
         #endregion Unity Interface
