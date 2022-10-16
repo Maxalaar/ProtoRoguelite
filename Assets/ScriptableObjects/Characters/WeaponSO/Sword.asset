@@ -35,16 +35,16 @@ MonoBehaviour:
     _type: 9
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 3
+    _base: 2
   _attackAnticipation:
     _serialized: 1
     _type: 10
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 1
+    _base: 0.5
   _knockback:
     _serialized: 1
     _type: 11
     _min: -3.4028235e+38
     _max: 3.4028235e+38
-    _base: 1
+    _base: 8

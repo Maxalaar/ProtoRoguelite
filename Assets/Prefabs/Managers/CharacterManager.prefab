@@ -109,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _characterPrefab: {fileID: 8344349570364077734, guid: 39524db61aea30c4094e853320184ce7, type: 3}
-  nbBlue: 100
-  nbRed: 100
+  _nbBlue: 300
+  _nbRed: 300
+  _refillTeamsDelay: 30
   _characterArchetypeSO: {fileID: 11400000, guid: 003e14ff3dbe84242bc6ee318802655a, type: 2}

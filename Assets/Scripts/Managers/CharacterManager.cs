@@ -15,8 +15,9 @@ namespace ProtoRoguelite.Managers
         [SerializeField] private GameObject _characterPrefab;
 
         [SerializeField] private List<Team> _teams = new List<Team>();
-        [SerializeField] private int nbBlue;
-        [SerializeField] private int nbRed;
+        [SerializeField] private int _nbBlue;
+        [SerializeField] private int _nbRed;
+        [SerializeField] private int _refillTeamsDelay;
 
         [SerializeField] private CharacterArchetypeSO _characterArchetypeSO = null;
         #endregion Serialized Fields
@@ -67,26 +68,18 @@ namespace ProtoRoguelite.Managers
                     Destroy(character.gameObject);
                 },
                 true,
-                nbBlue + nbRed,
-                nbBlue + nbRed
+                _nbBlue + _nbRed,
+                _nbBlue + _nbRed
             );
 
-            for (int i = 0; i < nbBlue; i++)
-            {                
-                Character character = AddCharacter(blueTeam);
-            }
-
-            for (int i = 0; i < nbRed; i++)
-            {
-                Character character = AddCharacter(redTeam);
-            }
+            FillTeamsCharacters();
 
             OnAllCharactersInstantiationEnd?.Invoke();
 
-            InvokeRepeating("FillTeamCharacters", 15f, 15f);
+            InvokeRepeating("FillTeamsCharacters", _refillTeamsDelay, _refillTeamsDelay);
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (_characters == null)
             {
@@ -101,19 +94,27 @@ namespace ProtoRoguelite.Managers
 
                 character.UpdateCharacter();
             }
+
+            for (int i = 0; i < _characters.Count; i++)
+            {
+                if (_characters[i] == null)
+                    continue;
+
+                _characters[i].ApplyDamage(); 
+            }
         }
         #endregion Unity Interface
 
         #region Private Methods
-        private void FillTeamCharacters()
+        private void FillTeamsCharacters()
         {
-            int blueCount = nbBlue - _teams[0].Characters.Count;
+            int blueCount = _nbBlue - _teams[0].Characters.Count;
             for (int i = 0; i < blueCount; i++)
             {
                 AddCharacter(_teams[0]);
             }
 
-            int redCount = nbRed - _teams[1].Characters.Count;
+            int redCount = _nbRed - _teams[1].Characters.Count;
             for (int i = 0; i < redCount; i++)
             {
                 AddCharacter(_teams[1]);
@@ -190,7 +191,7 @@ namespace ProtoRoguelite.Managers
                 RemoveCharacter(character);
             }
 
-            FillTeamCharacters();
+            FillTeamsCharacters();
         }
         #endregion Public Methods
 

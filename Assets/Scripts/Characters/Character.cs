@@ -46,8 +46,10 @@ namespace ProtoRoguelite.Characters
         [SerializeField] private Weapon _weapon;
 
         [SerializeField] private Collider2D _bodyCollider;
-        
         [SerializeField] private float _nearestTargetRadius = 1f;
+
+        [SerializeField] private List<(int damage, Vector2? knockback)> _nextAttacksToApply = new List<(int damage, Vector2? knockback)>();
+
         #endregion Serialized Fields
 
         #region Private Fields
@@ -369,20 +371,30 @@ namespace ProtoRoguelite.Characters
 
         public void TakeDamage(int damage, Vector2? knockback = null)
         {
-            _currentHealth -= damage;
+            _nextAttacksToApply.Add((damage, knockback));
+        }
 
-            _textMeshHealth.text = _currentHealth.ToString();
-
-            if (_currentHealth <= 0)
+        public void ApplyDamage()
+        {
+            foreach ((int damage, Vector2? knockback) attack in _nextAttacksToApply)
             {
-                Die();
-                return;
+                _currentHealth -= attack.damage;
+
+                _textMeshHealth.text = _currentHealth.ToString();
+
+                if (_currentHealth <= 0)
+                {
+                    Die();
+                    return;
+                }
+
+                if (attack.knockback != null)
+                {
+                    _rigidBody2D.AddForce((Vector2)attack.knockback, ForceMode2D.Impulse);
+                }
             }
 
-            if (knockback != null)
-            {
-                _rigidBody2D.AddForce((Vector2)knockback, ForceMode2D.Impulse);
-            }
+            _nextAttacksToApply.Clear();
         }
         #endregion Public Methods
 
